@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft, Camera, Send, Clock, CheckCircle, Loader } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
-import { mockFaultReports } from '@/utils/mockData';
+import { mockFaultReports, currentUser } from '@/utils/mockData';
 import { FaultReport } from '@/types';
 
 const categories = [
@@ -71,8 +72,37 @@ function FaultCard({ report, index }: { report: FaultReport; index: number }) {
 
 export default function FaultsScreen() {
   const router = useRouter();
+  const [faultReports, setFaultReports] = useState<FaultReport[]>(mockFaultReports);
   const [selectedCategory, setSelectedCategory] = useState('technical');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  const handleSubmit = () => {
+    if (!description.trim()) {
+      Alert.alert('Uyarı', 'Lütfen bir açıklama girin.');
+      return;
+    }
+
+    const newReport: FaultReport = {
+      id: Date.now().toString(),
+      title: title.trim() || categories.find(c => c.id === selectedCategory)?.label + ' Talebi',
+      description: description.trim(),
+      category: selectedCategory as FaultReport['category'],
+      status: 'pending',
+      reportedBy: `${currentUser.name} ${currentUser.surname} (${currentUser.apartment})`,
+      createdAt: new Date(),
+    };
+
+    setFaultReports([newReport, ...faultReports]);
+    setTitle('');
+    setDescription('');
+
+    Alert.alert(
+      'Başarılı',
+      'Talebiniz başarıyla oluşturuldu. En kısa sürede değerlendirilecektir.',
+      [{ text: 'Tamam' }]
+    );
+  };
 
   return (
     <>
@@ -137,6 +167,19 @@ export default function FaultsScreen() {
                 </View>
               </View>
 
+              {/* Title Input */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Başlık (Opsiyonel)</Text>
+                <TextInput
+                  style={styles.titleInput}
+                  placeholder="Kısa bir başlık girin..."
+                  placeholderTextColor={Colors.neutral[400]}
+                  value={title}
+                  onChangeText={setTitle}
+                  maxLength={100}
+                />
+              </View>
+
               {/* Description Input */}
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Açıklama</Text>
@@ -162,7 +205,14 @@ export default function FaultsScreen() {
               </View>
 
               {/* Submit Button */}
-              <TouchableOpacity style={styles.submitButton}>
+              <TouchableOpacity
+                style={[
+                  styles.submitButton,
+                  !description.trim() && styles.submitButtonDisabled,
+                ]}
+                onPress={handleSubmit}
+                disabled={!description.trim()}
+              >
                 <Send color={Colors.text.inverse} size={20} strokeWidth={2} />
                 <Text style={styles.submitButtonText}>Talebi Gönder</Text>
               </TouchableOpacity>
@@ -171,11 +221,17 @@ export default function FaultsScreen() {
 
           {/* My Requests History */}
           <View style={styles.historySection}>
-            <Text style={styles.sectionTitle}>Geçmiş Taleplerim</Text>
+            <Text style={styles.sectionTitle}>Geçmiş Taleplerim ({faultReports.length})</Text>
 
-            {mockFaultReports.map((report, index) => (
+            {faultReports.map((report, index) => (
               <FaultCard key={report.id} report={report} index={index} />
             ))}
+
+            {faultReports.length === 0 && (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>Henüz bir talebiniz bulunmuyor</Text>
+              </View>
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -254,6 +310,16 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: Spacing.lg,
   },
+  titleInput: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
+    color: Colors.neutral[800],
+    backgroundColor: Colors.neutral[50],
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.neutral[200],
+  },
   textInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 15,
@@ -294,6 +360,9 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.base,
     marginTop: Spacing.sm,
+  },
+  submitButtonDisabled: {
+    backgroundColor: Colors.neutral[300],
   },
   submitButtonText: {
     fontFamily: 'Inter-SemiBold',
@@ -352,6 +421,15 @@ const styles = StyleSheet.create({
   faultMeta: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
+    color: Colors.neutral[500],
+  },
+  emptyState: {
+    padding: Spacing['2xl'],
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
     color: Colors.neutral[500],
   },
 });
