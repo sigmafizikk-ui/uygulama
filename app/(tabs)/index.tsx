@@ -5,12 +5,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   Bell,
   User,
@@ -22,72 +21,85 @@ import {
   FileText,
   Store,
   MessageSquare,
-  Building2,
+  Home,
+  ChevronRight,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
 import { currentUser, siteInfo } from '@/utils/mockData';
 
 const menuItems = [
   {
     id: 'announcements',
     title: 'Duyurular',
+    subtitle: 'Yönetimden',
     icon: Megaphone,
-    color: Colors.primary[500],
+    gradient: Gradients.announcements,
     route: '/announcements',
   },
   {
     id: 'sharing',
     title: 'Ödünç & Paylaşım',
+    subtitle: 'Komşuluk',
     icon: Share2,
-    color: Colors.secondary[500],
+    gradient: Gradients.sharing,
     route: '/sharing',
   },
   {
     id: 'neighbors',
     title: 'Komşularım',
+    subtitle: 'Bina sakinleri',
     icon: Users,
-    color: Colors.status.info,
+    gradient: Gradients.neighbors,
     route: '/neighbors',
   },
   {
     id: 'faults',
     title: 'Arıza & Talep',
+    subtitle: 'Teknik destek',
     icon: Wrench,
-    color: Colors.status.warning,
+    gradient: Gradients.faults,
     route: '/faults',
   },
   {
     id: 'events',
     title: 'Etkinlikler',
+    subtitle: 'Organizasyonlar',
     icon: Calendar,
-    color: Colors.secondary[600],
+    gradient: Gradients.events,
     route: '/events',
   },
   {
     id: 'documents',
     title: 'Belgeler',
+    subtitle: 'Resmi evraklar',
     icon: FileText,
-    color: Colors.neutral[600],
+    gradient: Gradients.documents,
     route: '/documents',
   },
   {
     id: 'businesses',
     title: 'Anlaşmalı Esnaflar',
+    subtitle: 'İndirimler',
     icon: Store,
-    color: Colors.status.error,
+    gradient: Gradients.businesses,
     route: '/businesses',
   },
   {
     id: 'forum',
     title: 'Sohbet & Soru',
+    subtitle: 'Topluluk',
     icon: MessageSquare,
-    color: Colors.primary[600],
+    gradient: Gradients.forum,
     route: '/forum',
   },
 ];
 
 export default function HomeScreen() {
   const router = useRouter();
+
+  const getInitials = () => {
+    return `${currentUser.name.charAt(0)}${currentUser.surname.charAt(0)}`;
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -97,12 +109,19 @@ export default function HomeScreen() {
         style={styles.header}
       >
         <View style={styles.headerLeft}>
-          <View style={styles.siteNameRow}>
-            <Building2 color={Colors.primary[600]} size={20} strokeWidth={2} />
-            <Text style={styles.logo}>{siteInfo.name}</Text>
+          <View style={styles.logoRow}>
+            <LinearGradient
+              colors={Gradients.heroCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.homeIconContainer}
+            >
+              <Home color={Colors.text.inverse} size={18} strokeWidth={2.5} />
+            </LinearGradient>
+            <Text style={styles.logo}>Apartmanım</Text>
           </View>
           <Text style={styles.locationText}>
-            {currentUser.block} - {currentUser.apartment}
+            {siteInfo.name} • {currentUser.block} • D:{currentUser.floor}
           </Text>
         </View>
         <View style={styles.headerRight}>
@@ -110,12 +129,30 @@ export default function HomeScreen() {
             <Bell color={Colors.neutral[700]} size={24} strokeWidth={2} />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.profileButton}>
-            <View style={styles.profileImage}>
-              <User color={Colors.neutral[600]} size={22} strokeWidth={2} />
-            </View>
-          </TouchableOpacity>
+          <View style={styles.avatarContainer}>
+            <LinearGradient
+              colors={Gradients.heroCard}
+              style={styles.avatar}
+            >
+              <Text style={styles.avatarText}>{getInitials()}</Text>
+            </LinearGradient>
+          </View>
         </View>
+      </Animated.View>
+
+      {/* Active Site Bar */}
+      <Animated.View
+        entering={FadeIn.delay(150)}
+        style={styles.siteBar}
+      >
+        <View style={styles.siteBarLeft}>
+          <Text style={styles.activeSiteLabel}>AKTİF SITE</Text>
+          <Text style={styles.activeSiteName}>{siteInfo.name}</Text>
+        </View>
+        <TouchableOpacity style={styles.changeSiteButton}>
+          <Text style={styles.changeSiteText}>Değiştir</Text>
+          <ChevronRight color={Colors.primary[600]} size={16} strokeWidth={2} />
+        </TouchableOpacity>
       </Animated.View>
 
       {/* Scrollable Content */}
@@ -124,38 +161,24 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Site Info Card */}
-        <Animated.View
-          entering={FadeInDown.delay(150)}
-          style={styles.siteCard}
-        >
-          <View style={styles.siteCardHeader}>
-            <Building2 color={Colors.primary[600]} size={24} strokeWidth={2} />
-            <Text style={styles.siteCardTitle}>{siteInfo.name}</Text>
-          </View>
-          <Text style={styles.siteCardAddress}>{siteInfo.address}</Text>
-          <View style={styles.siteCardStats}>
-            <View style={styles.siteStat}>
-              <Text style={styles.siteStatNumber}>{siteInfo.totalBlocks}</Text>
-              <Text style={styles.siteStatLabel}>Blok</Text>
-            </View>
-            <View style={styles.siteStatDivider} />
-            <View style={styles.siteStat}>
-              <Text style={styles.siteStatNumber}>{siteInfo.totalApartments}</Text>
-              <Text style={styles.siteStatLabel}>Daire</Text>
-            </View>
-          </View>
-        </Animated.View>
-
-        {/* Welcome Section */}
+        {/* Hero Card */}
         <Animated.View
           entering={FadeInDown.delay(200)}
-          style={styles.welcomeSection}
+          style={styles.heroCard}
         >
-          <Text style={styles.welcomeTitle}>Merhaba, {currentUser.name}</Text>
-          <Text style={styles.welcomeSubtitle}>
-            Site hayatınızı kolaylaştıran uygulama
-          </Text>
+          <LinearGradient
+            colors={Gradients.heroCard}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.heroGradient}
+          >
+            <Text style={styles.heroTitle}>
+              Hoş geldin, {currentUser.name} 👋
+            </Text>
+            <Text style={styles.heroSubtitle}>
+              Sitende 2 yeni duyuru ve 1 etkinlik var.
+            </Text>
+          </LinearGradient>
         </Animated.View>
 
         {/* Menu Grid */}
@@ -163,46 +186,28 @@ export default function HomeScreen() {
           {menuItems.map((item, index) => (
             <Animated.View
               key={item.id}
-              entering={FadeInDown.delay(300 + index * 80)}
+              entering={FadeInDown.delay(300 + index * 70)}
               style={styles.gridItem}
             >
               <TouchableOpacity
                 style={styles.menuCard}
                 onPress={() => router.push(item.route)}
-                activeOpacity={0.7}
+                activeOpacity={0.8}
               >
-                <View
-                  style={[
-                    styles.iconContainer,
-                    { backgroundColor: item.color + '15' },
-                  ]}
+                <LinearGradient
+                  colors={item.gradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.iconContainer}
                 >
-                  <item.icon color={item.color} size={32} strokeWidth={2} />
-                </View>
+                  <item.icon color={Colors.text.inverse} size={26} strokeWidth={2} />
+                </LinearGradient>
                 <Text style={styles.menuTitle}>{item.title}</Text>
+                <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
               </TouchableOpacity>
             </Animated.View>
           ))}
         </View>
-
-        {/* Quick Stats */}
-        <Animated.View
-          entering={FadeInDown.delay(1100)}
-          style={styles.statsContainer}
-        >
-          <View style={styles.statsCard}>
-            <Text style={styles.statsNumber}>4</Text>
-            <Text style={styles.statsLabel}>Aktif Duyuru</Text>
-          </View>
-          <View style={styles.statsCard}>
-            <Text style={styles.statsNumber}>3</Text>
-            <Text style={styles.statsLabel}>Yaklaşan Etkinlik</Text>
-          </View>
-          <View style={styles.statsCard}>
-            <Text style={styles.statsNumber}>6</Text>
-            <Text style={styles.statsLabel}>Anlaşmalı Esnaf</Text>
-          </View>
-        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -211,51 +216,56 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: Colors.slate[50],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.lg,
+    paddingTop: Spacing.base,
+    paddingBottom: Spacing.md,
     backgroundColor: Colors.background.secondary,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
   },
   headerLeft: {
     flex: 1,
   },
-  siteNameRow: {
+  logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    gap: Spacing.sm,
     marginBottom: 2,
+  },
+  homeIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logo: {
     fontFamily: 'Inter-Bold',
-    fontSize: 22,
-    color: Colors.primary[700],
+    fontSize: 20,
+    color: Colors.slate[800],
   },
   locationText: {
-    fontFamily: 'Inter-Medium',
-    fontSize: 14,
-    color: Colors.neutral[500],
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    color: Colors.slate[500],
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: Spacing.base,
   },
   notificationButton: {
     position: 'relative',
-    padding: Spacing.sm,
+    padding: Spacing.xs,
   },
   notificationBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 6,
+    right: 6,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -263,89 +273,91 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.background.secondary,
   },
-  profileButton: {
-    marginLeft: Spacing.sm,
-  },
-  profileImage: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: Colors.neutral[200],
+  avatarContainer: {},
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
+  },
+  avatarText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.text.inverse,
+  },
+  siteBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.background.secondary,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: Colors.slate[200],
+    ...Shadows.sm,
+  },
+  siteBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  activeSiteLabel: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
+    color: Colors.slate[400],
+    letterSpacing: 0.5,
+  },
+  activeSiteName: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.slate[700],
+  },
+  changeSiteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.primary[50],
+    borderRadius: BorderRadius.lg,
+  },
+  changeSiteText: {
+    fontFamily: 'Inter-Medium',
+    fontSize: 13,
+    color: Colors.primary[600],
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
     paddingBottom: Spacing['4xl'],
   },
-  siteCard: {
-    backgroundColor: Colors.primary[50],
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.base,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.primary[100],
+  heroCard: {
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius['2xl'],
+    overflow: 'hidden',
+    ...Shadows.md,
   },
-  siteCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
+  heroGradient: {
+    padding: Spacing.xl,
+    paddingVertical: Spacing['2xl'],
+  },
+  heroTitle: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 22,
+    color: Colors.text.inverse,
     marginBottom: Spacing.xs,
   },
-  siteCardTitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 16,
-    color: Colors.primary[700],
-  },
-  siteCardAddress: {
+  heroSubtitle: {
     fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    color: Colors.neutral[600],
-    marginBottom: Spacing.md,
-  },
-  siteCardStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  siteStat: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  siteStatNumber: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 24,
-    color: Colors.primary[600],
-  },
-  siteStatLabel: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    color: Colors.neutral[500],
-  },
-  siteStatDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: Colors.primary[200],
-    marginHorizontal: Spacing.lg,
-  },
-  welcomeSection: {
-    marginBottom: Spacing['2xl'],
-  },
-  welcomeTitle: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 26,
-    color: Colors.neutral[800],
-    marginBottom: Spacing.xs,
-  },
-  welcomeSubtitle: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 15,
-    color: Colors.neutral[500],
+    fontSize: 14,
+    color: Colors.text.inverse,
+    opacity: 0.9,
   },
   grid: {
     flexDirection: 'row',
@@ -359,53 +371,30 @@ const styles = StyleSheet.create({
   },
   menuCard: {
     backgroundColor: Colors.background.card,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.md,
+    borderRadius: BorderRadius['2xl'],
+    padding: Spacing.lg,
     alignItems: 'center',
-    minHeight: 120,
-    justifyContent: 'center',
     ...Shadows.md,
-    borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   iconContainer: {
     width: 56,
     height: 56,
-    borderRadius: BorderRadius.lg,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.base,
   },
   menuTitle: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 13,
-    color: Colors.neutral[700],
+    fontSize: 14,
+    color: Colors.slate[800],
+    marginBottom: 2,
     textAlign: 'center',
   },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: Spacing['xl'],
-  },
-  statsCard: {
-    flex: 1,
-    backgroundColor: Colors.background.card,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.sm + 2,
-    marginHorizontal: Spacing.xs,
-    alignItems: 'center',
-    ...Shadows.sm,
-  },
-  statsNumber: {
-    fontFamily: 'Inter-Bold',
-    fontSize: 28,
-    color: Colors.primary[600],
-    marginBottom: 2,
-  },
-  statsLabel: {
-    fontFamily: 'Inter-Medium',
-    fontSize: 11,
-    color: Colors.neutral[500],
+  menuSubtitle: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: Colors.slate[500],
     textAlign: 'center',
   },
 });

@@ -14,8 +14,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { ArrowLeft, MessageCircle, Package, HandHeart, Plus, X } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ArrowLeft, Plus, X } from 'lucide-react-native';
+import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
 import { mockShareItems, currentUser } from '@/utils/mockData';
 import { ShareItem } from '@/types';
 
@@ -29,13 +30,11 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
   const typeConfig = {
     borrowing: {
       label: 'Arıyorum',
-      color: Colors.status.info,
-      icon: Package,
+      gradient: Gradients.faults,
     },
     sharing: {
       label: 'Paylaşıyorum',
-      color: Colors.secondary[500],
-      icon: HandHeart,
+      gradient: Gradients.sharing,
     },
   };
 
@@ -43,16 +42,23 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
 
   return (
     <Animated.View
-      entering={FadeInDown.delay(100 + index * 100)}
+      entering={FadeInDown.delay(50 + index * 80)}
       style={styles.card}
     >
       <View style={styles.cardHeader}>
-        <View style={styles.cardImage}>
-          <config.icon color={config.color} size={32} strokeWidth={2} />
-        </View>
+        <LinearGradient
+          colors={config.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.cardIcon}
+        >
+          <Text style={styles.cardIconText}>
+            {item.type === 'borrowing' ? '🔍' : '❤️'}
+          </Text>
+        </LinearGradient>
         <View style={styles.cardInfo}>
-          <View style={[styles.typeBadge, { backgroundColor: config.color + '20' }]}>
-            <Text style={[styles.typeText, { color: config.color }]}>
+          <View style={[styles.typeBadge, { backgroundColor: config.gradient[0] + '20' }]}>
+            <Text style={[styles.typeText, { color: config.gradient[0] }]}>
               {config.label}
             </Text>
           </View>
@@ -62,12 +68,8 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
       <Text style={styles.cardDescription}>{item.description}</Text>
       <View style={styles.cardFooter}>
         <Text style={styles.cardOwner}>
-          İlan Sahibi: {item.owner} (Kat: {item.floor})
+          {item.owner} • Kat {item.floor}
         </Text>
-        <TouchableOpacity style={styles.messageButton}>
-          <MessageCircle color={Colors.text.inverse} size={18} strokeWidth={2} />
-          <Text style={styles.messageButtonText}>Mesaj Gönder</Text>
-        </TouchableOpacity>
       </View>
     </Animated.View>
   );
@@ -107,11 +109,7 @@ export default function SharingScreen() {
     setNewItemDescription('');
     setIsModalVisible(false);
 
-    Alert.alert(
-      'Başarılı',
-      'İlanınız başarıyla yayınlandı.',
-      [{ text: 'Tamam' }]
-    );
+    Alert.alert('Başarılı', 'İlanınız başarıyla yayınlandı.', [{ text: 'Tamam' }]);
   };
 
   return (
@@ -123,7 +121,7 @@ export default function SharingScreen() {
           headerTitleStyle: {
             fontFamily: 'Inter-SemiBold',
             fontSize: 18,
-            color: Colors.neutral[800],
+            color: Colors.slate[800],
           },
           headerStyle: {
             backgroundColor: Colors.background.secondary,
@@ -133,7 +131,7 @@ export default function SharingScreen() {
               onPress={() => router.back()}
               style={styles.backButton}
             >
-              <ArrowLeft color={Colors.neutral[700]} size={24} strokeWidth={2} />
+              <ArrowLeft color={Colors.slate[700]} size={24} strokeWidth={2} />
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
@@ -180,140 +178,17 @@ export default function SharingScreen() {
           )}
         </ScrollView>
 
-        {/* Floating Action Button */}
         <TouchableOpacity
           style={styles.fab}
           onPress={() => setIsModalVisible(true)}
         >
-          <Plus color={Colors.text.inverse} size={28} strokeWidth={2.5} />
+          <LinearGradient
+            colors={Gradients.heroCard}
+            style={styles.fabGradient}
+          >
+            <Plus color={Colors.text.inverse} size={28} strokeWidth={2.5} />
+          </LinearGradient>
         </TouchableOpacity>
-
-        {/* New Item Modal */}
-        <Modal
-          visible={isModalVisible}
-          animationType="slide"
-          presentationStyle="pageSheet"
-          onRequestClose={() => setIsModalVisible(false)}
-        >
-          <SafeAreaView style={styles.modalContainer}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.keyboardView}
-            >
-              <View style={styles.modalHeader}>
-                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-                  <X color={Colors.neutral[500]} size={24} strokeWidth={2} />
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>Yeni İlan Ekle</Text>
-                <TouchableOpacity
-                  style={[
-                    styles.publishButton,
-                    (!newItemTitle.trim() || !newItemDescription.trim()) && styles.publishButtonDisabled,
-                  ]}
-                  onPress={handleAddItem}
-                  disabled={!newItemTitle.trim() || !newItemDescription.trim()}
-                >
-                  <Text
-                    style={[
-                      styles.publishButtonText,
-                      (!newItemTitle.trim() || !newItemDescription.trim()) && styles.publishButtonTextDisabled,
-                    ]}
-                  >
-                    Yayınla
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView style={styles.modalContent}>
-                {/* Type Selection */}
-                <View style={styles.typeSection}>
-                  <Text style={styles.inputLabel}>İlan Türü</Text>
-                  <View style={styles.typeButtons}>
-                    <TouchableOpacity
-                      style={[
-                        styles.typeButton,
-                        newItemType === 'borrowing' && styles.typeButtonBorrowing,
-                      ]}
-                      onPress={() => setNewItemType('borrowing')}
-                    >
-                      <Package
-                        color={newItemType === 'borrowing' ? Colors.text.inverse : Colors.status.info}
-                        size={20}
-                        strokeWidth={2}
-                      />
-                      <Text
-                        style={[
-                          styles.typeButtonText,
-                          newItemType === 'borrowing' && styles.typeButtonTextActive,
-                        ]}
-                      >
-                        Arıyorum
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[
-                        styles.typeButton,
-                        newItemType === 'sharing' && styles.typeButtonSharing,
-                      ]}
-                      onPress={() => setNewItemType('sharing')}
-                    >
-                      <HandHeart
-                        color={newItemType === 'sharing' ? Colors.text.inverse : Colors.secondary[500]}
-                        size={20}
-                        strokeWidth={2}
-                      />
-                      <Text
-                        style={[
-                          styles.typeButtonText,
-                          newItemType === 'sharing' && styles.typeButtonTextActive,
-                        ]}
-                      >
-                        Veriyorum
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* Title Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Başlık</Text>
-                  <TextInput
-                    style={styles.titleInput}
-                    placeholder={newItemType === 'borrowing' ? 'Ne arıyorsunuz?' : 'Ne paylaşıyorsunuz?'}
-                    placeholderTextColor={Colors.neutral[400]}
-                    value={newItemTitle}
-                    onChangeText={setNewItemTitle}
-                    maxLength={100}
-                  />
-                </View>
-
-                {/* Description Input */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Açıklama</Text>
-                  <TextInput
-                    style={styles.contentInput}
-                    placeholder="Detaylı açıklama yazın..."
-                    placeholderTextColor={Colors.neutral[400]}
-                    value={newItemDescription}
-                    onChangeText={setNewItemDescription}
-                    multiline
-                    textAlignVertical="top"
-                    maxLength={500}
-                  />
-                  <Text style={styles.charCount}>
-                    {newItemDescription.length}/500
-                  </Text>
-                </View>
-
-                <View style={styles.infoNote}>
-                  <Text style={styles.infoNoteText}>
-                    İlanınız {currentUser.block} bloğu komşuları tarafından görülecektir.
-                  </Text>
-                </View>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </SafeAreaView>
-        </Modal>
       </SafeAreaView>
     </>
   );
@@ -322,7 +197,7 @@ export default function SharingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: Colors.slate[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -331,29 +206,26 @@ const styles = StyleSheet.create({
   tabsContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
-    backgroundColor: Colors.background.secondary,
     paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
+    backgroundColor: Colors.background.secondary,
+    gap: Spacing.sm,
   },
   tab: {
-    flex: 1,
     paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    alignItems: 'center',
-    borderRadius: BorderRadius.lg,
-    marginHorizontal: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: Colors.slate[100],
   },
   tabActive: {
-    backgroundColor: Colors.primary[50],
+    backgroundColor: Colors.primary[600],
   },
   tabText: {
     fontFamily: 'Inter-Medium',
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: Colors.slate[600],
   },
   tabTextActive: {
-    color: Colors.primary[600],
+    color: Colors.text.inverse,
     fontFamily: 'Inter-SemiBold',
   },
   scrollView: {
@@ -364,27 +236,27 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'] + 80,
   },
   card: {
-    backgroundColor: Colors.background.card,
-    borderRadius: BorderRadius.xl,
+    backgroundColor: Colors.background.secondary,
+    borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     ...Shadows.md,
-    borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: Spacing.md,
   },
-  cardImage: {
-    width: 56,
-    height: 56,
-    borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.neutral[100],
+  cardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
+  },
+  cardIconText: {
+    fontSize: 22,
   },
   cardInfo: {
     flex: 1,
@@ -393,7 +265,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.sm,
+    borderRadius: BorderRadius.lg,
     marginBottom: Spacing.xs,
   },
   typeText: {
@@ -403,186 +275,44 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.neutral[800],
-    marginTop: Spacing.xs,
+    color: Colors.slate[800],
   },
   cardDescription: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: Colors.neutral[600],
+    color: Colors.slate[600],
     marginBottom: Spacing.base,
   },
-  cardFooter: {
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
+  cardFooter: {},
   cardOwner: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[500],
-  },
-  messageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.secondary[500],
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    gap: Spacing.xs,
-    width: '100%',
-    justifyContent: 'center',
-  },
-  messageButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.text.inverse,
+    color: Colors.slate[500],
   },
   emptyState: {
-    padding: Spacing['3xl'],
+    padding: Spacing['2xl'],
     alignItems: 'center',
   },
   emptyText: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    color: Colors.neutral[500],
+    fontSize: 15,
+    color: Colors.slate[500],
   },
   fab: {
     position: 'absolute',
     right: Spacing['2xl'],
     bottom: Spacing['2xl'],
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: Colors.primary[600],
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     ...Shadows.lg,
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: Colors.background.secondary,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
-  },
-  modalTitle: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 18,
-    color: Colors.neutral[800],
-  },
-  publishButton: {
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary[600],
-    borderRadius: BorderRadius.md,
-  },
-  publishButtonDisabled: {
-    backgroundColor: Colors.neutral[200],
-  },
-  publishButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.text.inverse,
-  },
-  publishButtonTextDisabled: {
-    color: Colors.neutral[400],
-  },
-  modalContent: {
-    flex: 1,
-    padding: Spacing.lg,
-  },
-  typeSection: {
-    marginBottom: Spacing.xl,
-  },
-  inputLabel: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    color: Colors.neutral[700],
-    marginBottom: Spacing.sm,
-  },
-  typeButtons: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  typeButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+  fabGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
     justifyContent: 'center',
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 2,
-    borderColor: Colors.neutral[200],
-    backgroundColor: Colors.neutral[50],
-  },
-  typeButtonBorrowing: {
-    backgroundColor: Colors.status.info,
-    borderColor: Colors.status.info,
-  },
-  typeButtonSharing: {
-    backgroundColor: Colors.secondary[500],
-    borderColor: Colors.secondary[500],
-  },
-  typeButtonText: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 15,
-    color: Colors.neutral[600],
-  },
-  typeButtonTextActive: {
-    color: Colors.text.inverse,
-  },
-  inputGroup: {
-    marginBottom: Spacing.xl,
-  },
-  titleInput: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    color: Colors.neutral[800],
-    backgroundColor: Colors.neutral[50],
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.base,
-    borderWidth: 1,
-    borderColor: Colors.neutral[200],
-  },
-  contentInput: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    color: Colors.neutral[800],
-    backgroundColor: Colors.neutral[50],
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.base,
-    borderWidth: 1,
-    borderColor: Colors.neutral[200],
-    minHeight: 120,
-  },
-  charCount: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    color: Colors.neutral[400],
-    textAlign: 'right',
-    marginTop: Spacing.xs,
-  },
-  infoNote: {
-    backgroundColor: Colors.neutral[100],
-    padding: Spacing.base,
-    borderRadius: BorderRadius.lg,
-    marginTop: Spacing.sm,
-  },
-  infoNoteText: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 13,
-    color: Colors.neutral[600],
-    textAlign: 'center',
+    alignItems: 'center',
   },
 });

@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Home, Settings } from 'lucide-react-native';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Colors } from '@/utils/theme';
 
 export default function TabLayout() {
@@ -11,22 +11,22 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: Colors.background.secondary,
-            borderTopWidth: 1,
-            borderTopColor: Colors.neutral[200],
+            borderTopWidth: 0,
             height: Platform.OS === 'ios' ? 88 : 64,
             paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-            paddingTop: 8,
-            elevation: 8,
-            shadowColor: Colors.neutral[900],
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 8,
+            paddingTop: 10,
+            elevation: 20,
+            shadowColor: Colors.slate[900],
+            shadowOffset: { width: 0, height: -4 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
           },
           tabBarActiveTintColor: Colors.primary[600],
-          tabBarInactiveTintColor: Colors.neutral[500],
+          tabBarInactiveTintColor: Colors.slate[400],
           tabBarLabelStyle: {
             fontFamily: 'Inter-Medium',
-            fontSize: 12,
+            fontSize: 11,
+            marginTop: 4,
           },
         }}>
         <Tabs.Screen
@@ -34,7 +34,7 @@ export default function TabLayout() {
           options={{
             title: 'Ana Sayfa',
             tabBarIcon: ({ color, size }) => (
-              <Home color={color} size={size} strokeWidth={2} />
+              <Home color={color} size={size + 4} strokeWidth={2.5} />
             ),
           }}
         />
@@ -43,7 +43,7 @@ export default function TabLayout() {
           options={{
             title: 'Ayarlar',
             tabBarIcon: ({ color, size }) => (
-              <Settings color={color} size={size} strokeWidth={2} />
+              <Settings color={color} size={size + 4} strokeWidth={2.5} />
             ),
           }}
         />
