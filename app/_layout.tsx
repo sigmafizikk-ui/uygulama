@@ -6,6 +6,7 @@ import { SplashScreen } from 'expo-router';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { AuthProvider } from '@/context/AuthContext';
 import { SiteProvider } from '@/context/SiteContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -36,14 +37,16 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <SiteProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="dark" />
-      </SiteProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SiteProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </SiteProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

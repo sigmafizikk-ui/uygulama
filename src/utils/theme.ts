@@ -1,4 +1,5 @@
-export const Colors = {
+// Light Theme
+export const LightColors = {
   // Primary corporate blue theme
   primary: {
     50: '#EFF6FF',
@@ -96,12 +97,12 @@ export const Colors = {
   },
   // Badge colors (soft pastel)
   badge: {
-    pending: '#FEF3C7', // Amber 100
-    pendingText: '#D97706', // Amber 600
-    in_progress: '#DBEAFE', // Blue 100
-    in_progressText: '#2563EB', // Blue 600
-    resolved: '#D1FAE5', // Emerald 100
-    resolvedText: '#059669', // Emerald 600
+    pending: '#FEF3C7',
+    pendingText: '#D97706',
+    in_progress: '#DBEAFE',
+    in_progressText: '#2563EB',
+    resolved: '#D1FAE5',
+    resolvedText: '#059669',
   },
   // Background colors
   background: {
@@ -117,6 +118,76 @@ export const Colors = {
     inverse: '#FFFFFF',
   },
 };
+
+// Dark Theme
+export const DarkColors = {
+  primary: LightColors.primary,
+  sky: LightColors.sky,
+  secondary: {
+    50: '#064E3B',
+    100: '#065F46',
+    200: '#047857',
+    300: '#059669',
+    400: '#10B981',
+    500: '#34D399',
+    600: '#6EE7B7',
+    700: '#A7F3D0',
+    800: '#D1FAE5',
+    900: '#ECFDF5',
+  },
+  teal: LightColors.teal,
+  amber: LightColors.amber,
+  orange: LightColors.orange,
+  emerald: LightColors.emerald,
+  neutral: {
+    50: '#0F172A',
+    100: '#1E293B',
+    200: '#334155',
+    300: '#475569',
+    400: '#64748B',
+    500: '#94A3B8',
+    600: '#CBD5E1',
+    700: '#E2E8F0',
+    800: '#F1F5F9',
+    900: '#F8FAFC',
+  },
+  slate: {
+    50: '#0F172A',
+    100: '#1E293B',
+    200: '#334155',
+    300: '#475569',
+    400: '#64748B',
+    500: '#94A3B8',
+    600: '#CBD5E1',
+    700: '#E2E8F0',
+    800: '#F1F5F9',
+    900: '#F8FAFC',
+  },
+  status: LightColors.status,
+  priority: LightColors.priority,
+  badge: {
+    pending: '#78350F',
+    pendingText: '#FCD34D',
+    in_progress: '#1E3A8A',
+    in_progressText: '#60A5FA',
+    resolved: '#064E3B',
+    resolvedText: '#34D399',
+  },
+  background: {
+    primary: '#0F172A',
+    secondary: '#1E293B',
+    card: '#1E293B',
+  },
+  text: {
+    primary: '#F8FAFC',
+    secondary: '#CBD5E1',
+    tertiary: '#94A3B8',
+    inverse: '#0F172A',
+  },
+};
+
+// Default export (Light theme for backward compatibility)
+export const Colors = LightColors;
 
 // Gradient definitions
 export const Gradients = {

@@ -24,9 +24,10 @@ import {
   Shield,
   ShieldCheck,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows, Gradients, LightColors, DarkColors } from '@/utils/theme';
 import { currentUser } from '@/utils/mockData';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SettingsItem {
   icon: React.ElementType;
@@ -43,12 +44,13 @@ interface SettingsSection {
 
 export default function SettingsScreen() {
   const { userRole, toggleRole, isAdmin } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const theme = isDark ? DarkColors : LightColors;
   const [notifications, setNotifications] = useState({
     announcements: true,
     messages: true,
     events: false,
   });
-  const [darkMode, setDarkMode] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     name: currentUser.name,
@@ -68,7 +70,7 @@ export default function SettingsScreen() {
     );
   };
 
-  const roletSection: SettingsSection = {
+  const roleSection: SettingsSection = {
     title: 'Rol Değiştir (Test Modu)',
     items: [
       {
@@ -77,7 +79,7 @@ export default function SettingsScreen() {
         subtitle: isAdmin ? 'Tüm yetkilere sahipsiniz' : 'Standart resident yetkileri',
         rightElement: (
           <TouchableOpacity
-            style={styles.roleToggle}
+            style={[styles.roleToggle, { backgroundColor: theme.primary[600] }]}
             onPress={toggleRole}
           >
             <Text style={styles.roleToggleText}>
@@ -99,13 +101,14 @@ export default function SettingsScreen() {
         action: () => setIsEditing(true),
         rightElement: isEditing ? (
           <TextInput
-            style={styles.editInput}
+            style={[styles.editInput, { color: theme.text.primary, borderBottomColor: theme.primary[500] }]}
             value={userData.name}
             onChangeText={(text) => setUserData({ ...userData, name: text })}
             placeholder="Adınız"
+            placeholderTextColor={theme.text.tertiary}
           />
         ) : (
-          <Text style={styles.settingValue}>{userData.name}</Text>
+          <Text style={[styles.settingValue, { color: theme.text.secondary }]}>{userData.name}</Text>
         ),
       },
       {
@@ -115,13 +118,14 @@ export default function SettingsScreen() {
         action: () => setIsEditing(true),
         rightElement: isEditing ? (
           <TextInput
-            style={styles.editInput}
+            style={[styles.editInput, { color: theme.text.primary, borderBottomColor: theme.primary[500] }]}
             value={userData.surname}
             onChangeText={(text) => setUserData({ ...userData, surname: text })}
             placeholder="Soyadınız"
+            placeholderTextColor={theme.text.tertiary}
           />
         ) : (
-          <Text style={styles.settingValue}>{userData.surname}</Text>
+          <Text style={[styles.settingValue, { color: theme.text.secondary }]}>{userData.surname}</Text>
         ),
       },
       {
@@ -131,14 +135,15 @@ export default function SettingsScreen() {
         action: () => setIsEditing(true),
         rightElement: isEditing ? (
           <TextInput
-            style={styles.editInput}
+            style={[styles.editInput, { color: theme.text.primary, borderBottomColor: theme.primary[500] }]}
             value={userData.phone}
             onChangeText={(text) => setUserData({ ...userData, phone: text })}
             placeholder="Telefon"
+            placeholderTextColor={theme.text.tertiary}
             keyboardType="phone-pad"
           />
         ) : (
-          <Text style={styles.settingValue}>{userData.phone}</Text>
+          <Text style={[styles.settingValue, { color: theme.text.secondary }]}>{userData.phone}</Text>
         ),
       },
       {
@@ -148,14 +153,15 @@ export default function SettingsScreen() {
         action: () => setIsEditing(true),
         rightElement: isEditing ? (
           <TextInput
-            style={styles.editInput}
+            style={[styles.editInput, { color: theme.text.primary, borderBottomColor: theme.primary[500] }]}
             value={userData.email}
             onChangeText={(text) => setUserData({ ...userData, email: text })}
             placeholder="E-posta"
+            placeholderTextColor={theme.text.tertiary}
             keyboardType="email-address"
           />
         ) : (
-          <Text style={styles.settingValue}>{userData.email}</Text>
+          <Text style={[styles.settingValue, { color: theme.text.secondary }]}>{userData.email}</Text>
         ),
       },
     ],
@@ -174,8 +180,8 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, announcements: value })
             }
-            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
-            thumbColor={Colors.background.card}
+            trackColor={{ false: theme.slate[300], true: theme.primary[400] }}
+            thumbColor={theme.background.card}
           />
         ),
       },
@@ -189,8 +195,8 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, messages: value })
             }
-            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
-            thumbColor={Colors.background.card}
+            trackColor={{ false: theme.slate[300], true: theme.primary[400] }}
+            thumbColor={theme.background.card}
           />
         ),
       },
@@ -204,8 +210,8 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, events: value })
             }
-            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
-            thumbColor={Colors.background.card}
+            trackColor={{ false: theme.slate[300], true: theme.primary[400] }}
+            thumbColor={theme.background.card}
           />
         ),
       },
@@ -218,13 +224,13 @@ export default function SettingsScreen() {
       {
         icon: Moon,
         title: 'Karanlık Mod',
-        subtitle: 'Uygulama temasını değiştir',
+        subtitle: isDark ? 'Karanlık tema aktif' : 'Açık tema aktif',
         rightElement: (
           <Switch
-            value={darkMode}
-            onValueChange={setDarkMode}
-            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
-            thumbColor={Colors.background.card}
+            value={isDark}
+            onValueChange={toggleTheme}
+            trackColor={{ false: theme.slate[300], true: theme.primary[400] }}
+            thumbColor={theme.background.card}
           />
         ),
       },
@@ -239,7 +245,7 @@ export default function SettingsScreen() {
         title: 'Şifre Değiştir',
         subtitle: 'Hesap şifrenizi güncelleyin',
         action: () => Alert.alert('Bilgi', 'Şifre değiştirme ekranı açılacak'),
-        rightElement: <ChevronRight color={Colors.slate[400]} size={20} strokeWidth={2} />,
+        rightElement: <ChevronRight color={theme.text.tertiary} size={20} strokeWidth={2} />,
       },
     ],
   };
@@ -251,8 +257,8 @@ export default function SettingsScreen() {
         entering={FadeInDown.delay(100 + sectionIndex * 150)}
         style={styles.section}
       >
-        <Text style={styles.sectionTitle}>{section.title}</Text>
-        <View style={styles.sectionContent}>
+        <Text style={[styles.sectionTitle, { color: theme.text.secondary }]}>{section.title}</Text>
+        <View style={[styles.sectionContent, { backgroundColor: theme.background.card, borderColor: theme.slate[200] }]}>
           {section.items.map((item, itemIndex) => {
             const Icon = item.icon;
             return (
@@ -260,19 +266,19 @@ export default function SettingsScreen() {
                 key={`${section.title}-${item.title}`}
                 style={[
                   styles.settingItem,
-                  itemIndex < section.items.length - 1 && styles.settingItemBorder,
+                  itemIndex < section.items.length - 1 && { borderBottomColor: theme.slate[200] },
                 ]}
                 onPress={item.action}
                 disabled={!item.action && !item.rightElement}
               >
                 <View style={styles.settingRow}>
                   <View style={styles.settingLeft}>
-                    <View style={styles.settingIconContainer}>
-                      <Icon color={Colors.primary[600]} size={20} strokeWidth={2} />
+                    <View style={[styles.settingIconContainer, { backgroundColor: theme.primary[50] }]}>
+                      <Icon color={theme.primary[600]} size={20} strokeWidth={2} />
                     </View>
                     <View style={styles.settingTextContainer}>
-                      <Text style={styles.settingTitle}>{item.title}</Text>
-                      <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+                      <Text style={[styles.settingTitle, { color: theme.text.primary }]}>{item.title}</Text>
+                      <Text style={[styles.settingSubtitle, { color: theme.text.tertiary }]}>{item.subtitle}</Text>
                     </View>
                   </View>
                   {item.rightElement}
@@ -286,15 +292,15 @@ export default function SettingsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.primary }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ayarlar</Text>
+      <View style={[styles.header, { backgroundColor: theme.background.secondary, borderBottomColor: theme.slate[200] }]}>
+        <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Ayarlar</Text>
         <TouchableOpacity
-          style={styles.editButton}
+          style={[styles.editButton, { backgroundColor: theme.primary[50] }]}
           onPress={() => setIsEditing(!isEditing)}
         >
-          <Text style={styles.editButtonText}>
+          <Text style={[styles.editButtonText, { color: theme.primary[600] }]}>
             {isEditing ? 'Kaydet' : 'Düzenle'}
           </Text>
         </TouchableOpacity>
@@ -303,7 +309,7 @@ export default function SettingsScreen() {
       {/* User Info Card */}
       <Animated.View
         entering={FadeInDown.delay(50)}
-        style={styles.userCard}
+        style={[styles.userCard, { backgroundColor: theme.background.card, borderColor: theme.slate[200] }]}
       >
         <LinearGradient
           colors={isAdmin ? Gradients.heroCard : Gradients.sharing}
@@ -315,14 +321,14 @@ export default function SettingsScreen() {
             {isAdmin ? 'YÖNETİCİ' : 'SAKİN'}
           </Text>
         </LinearGradient>
-        <View style={styles.userAvatar}>
-          <User color={Colors.slate[500]} size={32} strokeWidth={2} />
+        <View style={[styles.userAvatar, { backgroundColor: theme.slate[100] }]}>
+          <User color={theme.text.secondary} size={32} strokeWidth={2} />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>
+          <Text style={[styles.userName, { color: theme.text.primary }]}>
             {userData.name} {userData.surname}
           </Text>
-          <Text style={styles.userLocation}>
+          <Text style={[styles.userLocation, { color: theme.text.tertiary }]}>
             {currentUser.block} - {currentUser.apartment}
           </Text>
         </View>
@@ -335,7 +341,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {[
-          roletSection,
+          roleSection,
           profileSection,
           notificationSection,
           appearanceSection,
@@ -348,12 +354,12 @@ export default function SettingsScreen() {
           style={styles.logoutContainer}
         >
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <LogOut color={Colors.text.inverse} size={20} strokeWidth={2} />
+            <LogOut color={theme.text.inverse} size={20} strokeWidth={2} />
             <Text style={styles.logoutText}>Hesaptan Çıkış Yap</Text>
           </TouchableOpacity>
         </Animated.View>
 
-        <Text style={styles.versionText}>Versiyon 1.0.0</Text>
+        <Text style={[styles.versionText, { color: theme.text.tertiary }]}>Versiyon 1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -362,7 +368,6 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   header: {
     flexDirection: 'row',
@@ -370,30 +375,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
-    backgroundColor: Colors.background.secondary,
+    borderBottomWidth: 1,
   },
   headerTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 24,
-    color: Colors.slate[800],
   },
   editButton: {
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.primary[50],
   },
   editButtonText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.primary[600],
   },
   userCard: {
     margin: Spacing.lg,
     padding: Spacing.lg,
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius['2xl'],
     ...Shadows.md,
+    borderWidth: 1,
   },
   userRoleIndicator: {
     position: 'absolute',
@@ -407,14 +409,13 @@ const styles = StyleSheet.create({
   userRoleText: {
     fontFamily: 'Inter-Bold',
     fontSize: 10,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
     letterSpacing: 0.5,
   },
   userAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.slate[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
@@ -423,13 +424,11 @@ const styles = StyleSheet.create({
   userName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 18,
-    color: Colors.slate[800],
     marginBottom: 4,
   },
   userLocation: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.slate[500],
   },
   scrollView: {
     flex: 1,
@@ -444,24 +443,20 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 16,
-    color: Colors.slate[700],
     marginBottom: Spacing.sm,
     marginLeft: Spacing.xs,
   },
   sectionContent: {
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius['2xl'],
     overflow: 'hidden',
     ...Shadows.sm,
+    borderWidth: 1,
   },
   settingItem: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     minHeight: 56,
-  },
-  settingItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.slate[100],
   },
   settingRow: {
     flexDirection: 'row',
@@ -477,7 +472,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -488,39 +482,33 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontFamily: 'Inter-Medium',
     fontSize: 15,
-    color: Colors.slate[800],
     marginBottom: 2,
   },
   settingSubtitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.slate[500],
   },
   settingValue: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.slate[600],
   },
   editInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.slate[800],
     textAlign: 'right',
     borderBottomWidth: 1,
-    borderBottomColor: Colors.primary[500],
     minWidth: 100,
     paddingVertical: 2,
   },
   roleToggle: {
     paddingVertical: Spacing.xs + 2,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary[600],
     borderRadius: BorderRadius.lg,
   },
   roleToggleText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 13,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
   },
   logoutContainer: {
     paddingHorizontal: Spacing.lg,
@@ -531,7 +519,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.status.error,
+    backgroundColor: '#EF4444',
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],
     ...Shadows.md,
@@ -539,12 +527,11 @@ const styles = StyleSheet.create({
   logoutText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
   },
   versionText: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.slate[400],
     textAlign: 'center',
     marginTop: Spacing['2xl'],
     marginBottom: Spacing.lg,
