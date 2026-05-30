@@ -9,10 +9,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { ArrowLeft, Calendar, MapPin, Clock, Check, X } from 'lucide-react-native';
+import { ArrowLeft, Calendar, MapPin, Clock, Check, X, Plus } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { mockEvents, currentUser } from '@/utils/mockData';
 import { Event } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 const DAYS_TO_SHOW = 14;
 
@@ -128,6 +129,7 @@ function EventCard({
 
 export default function EventsScreen() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState(mockEvents);
   const days = generateDays();
@@ -261,6 +263,16 @@ export default function EventsScreen() {
             />
           ))}
         </ScrollView>
+
+        {/* Floating Action Button - Only for Admin */}
+        {isAdmin && (
+          <TouchableOpacity
+            style={styles.fab}
+            onPress={() => {}}
+          >
+            <Text style={styles.fabText}>+</Text>
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
     </>
   );
@@ -454,5 +466,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Medium',
     fontSize: 13,
     color: Colors.neutral[500],
+  },
+  fab: {
+    position: 'absolute',
+    right: Spacing['2xl'],
+    bottom: Spacing['2xl'],
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.primary[600],
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  fabText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 32,
+    color: Colors.text.inverse,
+    marginTop: -2,
   },
 });

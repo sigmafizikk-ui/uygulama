@@ -18,6 +18,7 @@ import { ArrowLeft, X } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { mockAnnouncements } from '@/utils/mockData';
 import { Announcement } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 const priorityConfig = {
   urgent: {
@@ -81,6 +82,7 @@ function AnnouncementCard({ announcement, index }: { announcement: Announcement;
 
 export default function AnnouncementsScreen() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -146,6 +148,16 @@ export default function AnnouncementsScreen() {
             />
           ))}
         </ScrollView>
+
+        {/* Floating Action Button - Only for Admin */}
+        {isAdmin && (
+          <TouchableOpacity
+            style={styles.fab}
+            onPress={() => setIsModalVisible(true)}
+          >
+            <Text style={styles.fabText}>+</Text>
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
     </>
   );
@@ -165,7 +177,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: Spacing.lg,
-    paddingBottom: Spacing['4xl'],
+    paddingBottom: Spacing['4xl'] + 80,
   },
   card: {
     backgroundColor: Colors.background.secondary,
@@ -208,5 +220,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.slate[500],
+  },
+  fab: {
+    position: 'absolute',
+    right: Spacing['2xl'],
+    bottom: Spacing['2xl'],
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.primary[600],
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  fabText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 32,
+    color: Colors.text.inverse,
+    marginTop: -2,
   },
 });

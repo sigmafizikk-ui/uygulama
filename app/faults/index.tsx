@@ -15,6 +15,7 @@ import { ArrowLeft, Clock, CheckCircle, Loader, Camera, ChevronRight } from 'luc
 import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { mockFaultReports, currentUser } from '@/utils/mockData';
 import { FaultReport } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 const categories = [
   { id: 'cleaning', label: 'Temizlik' },
@@ -49,7 +50,17 @@ const statusConfig = {
   },
 };
 
-function FaultCard({ report, index }: { report: FaultReport; index: number }) {
+function FaultCard({
+  report,
+  index,
+  isAdmin,
+  onStatusChange,
+}: {
+  report: FaultReport;
+  index: number;
+  isAdmin: boolean;
+  onStatusChange: (id: string, status: FaultReport['status']) => void;
+}) {
   const config = statusConfig[report.status];
 
   return (
@@ -59,14 +70,40 @@ function FaultCard({ report, index }: { report: FaultReport; index: number }) {
     >
       <View style={styles.faultContent}>
         <Text style={styles.faultTitle}>{report.title}</Text>
+        <Text style={styles.faultDescription} numberOfLines={2}>
+          {report.description}
+        </Text>
         <Text style={styles.faultDate}>
           {report.createdAt.toLocaleDateString('tr-TR')}
         </Text>
       </View>
-      <View style={[styles.statusBadge, { backgroundColor: config.background }]}>
-        <Text style={[styles.statusText, { color: config.textColor }]}>
-          {config.label}
-        </Text>
+      <View style={styles.faultRight}>
+        <View style={[styles.statusBadge, { backgroundColor: config.background }]}>
+          <Text style={[styles.statusText, { color: config.textColor }]}>
+            {config.label}
+          </Text>
+        </View>
+
+        {isAdmin && report.status !== 'resolved' && (
+          <View style={styles.adminActions}>
+            {report.status === 'pending' && (
+              <TouchableOpacity
+                style={styles.statusButton}
+                onPress={() => onStatusChange(report.id, 'in_progress')}
+              >
+                <Text style={styles.statusButtonText}>İşleme Al</Text>
+              </TouchableOpacity>
+            )}
+            {report.status === 'in_progress' && (
+              <TouchableOpacity
+                style={[styles.statusButton, styles.statusButtonResolve]}
+                onPress={() => onStatusChange(report.id, 'resolved')}
+              >
+                <Text style={styles.statusButtonText}>Çözüldü</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </View>
     </Animated.View>
   );
@@ -74,11 +111,20 @@ function FaultCard({ report, index }: { report: FaultReport; index: number }) {
 
 export default function FaultsScreen() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
   const [faultReports, setFaultReports] = useState<FaultReport[]>(mockFaultReports);
   const [selectedTarget, setSelectedTarget] = useState('block');
   const [selectedCategory, setSelectedCategory] = useState('technical');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  const handleStatusChange = (id: string, newStatus: FaultReport['status']) => {
+    setFaultReports((prev) =>
+      prev.map((report) =>
+        report.id === id ? { ...report, status: newStatus } : report
+      )
+    );
+  };
 
   const handleSubmit = () => {
     if (!description.trim()) {
@@ -232,7 +278,13 @@ export default function FaultsScreen() {
           <View style={styles.historySection}>
             <Text style={styles.historyTitle}>GEÇMİŞ TALEPLERİM</Text>
             {faultReports.map((report, index) => (
-              <FaultCard key={report.id} report={report} index={index} />
+              <FaultCard
+                key={report.id}
+                report={report}
+                index={index}
+                isAdmin={isAdmin}
+                onStatusChange={handleStatusChange}
+              />
             ))}
 
             {faultReports.length === 0 && (
@@ -405,11 +457,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: Spacing.md,
   },
+  faultRight: {
+    alignItems: 'flex-end',
+  },
   faultTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 15,
     color: Colors.slate[800],
     marginBottom: 2,
+  },
+  faultDescription: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    color: Colors.slate[600],
+    marginBottom: Spacing.xs,
+    lineHeight: 18,
   },
   faultDate: {
     fontFamily: 'Inter-Regular',
@@ -420,10 +482,32 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.xl,
+    marginBottom: Spacing.sm,
   },
   statusText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 11,
+  },
+  adminActions: {
+    flexDirection: 'row',
+    gap: Spacing.xs,
+  },
+  statusButton: {
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    backgroundColor: Colors.primary[50],
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: Colors.primary[200],
+  },
+  statusButtonResolve: {
+    backgroundColor: Colors.emerald[50],
+    borderColor: Colors.emerald[200],
+  },
+  statusButtonText: {
+    fontFamily: 'Inter-Medium',
+    fontSize: 11,
+    color: Colors.primary[700],
   },
   emptyState: {
     padding: Spacing['2xl'],

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   User,
   Bell,
@@ -20,9 +21,12 @@ import {
   Key,
   Phone,
   Mail,
+  Shield,
+  ShieldCheck,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
 import { currentUser } from '@/utils/mockData';
+import { useAuth } from '@/context/AuthContext';
 
 interface SettingsItem {
   icon: React.ElementType;
@@ -38,6 +42,7 @@ interface SettingsSection {
 }
 
 export default function SettingsScreen() {
+  const { userRole, toggleRole, isAdmin } = useAuth();
   const [notifications, setNotifications] = useState({
     announcements: true,
     messages: true,
@@ -61,6 +66,27 @@ export default function SettingsScreen() {
         { text: 'Çıkış Yap', style: 'destructive' },
       ]
     );
+  };
+
+  const roletSection: SettingsSection = {
+    title: 'Rol Değiştir (Test Modu)',
+    items: [
+      {
+        icon: isAdmin ? ShieldCheck : Shield,
+        title: isAdmin ? 'Yönetici Modu' : 'Sakin Modu',
+        subtitle: isAdmin ? 'Tüm yetkilere sahipsiniz' : 'Standart resident yetkileri',
+        rightElement: (
+          <TouchableOpacity
+            style={styles.roleToggle}
+            onPress={toggleRole}
+          >
+            <Text style={styles.roleToggleText}>
+              {isAdmin ? 'Sakine Geç' : 'Yöneticiye Geç'}
+            </Text>
+          </TouchableOpacity>
+        ),
+      },
+    ],
   };
 
   const profileSection: SettingsSection = {
@@ -148,7 +174,7 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, announcements: value })
             }
-            trackColor={{ false: Colors.neutral[300], true: Colors.primary[400] }}
+            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
             thumbColor={Colors.background.card}
           />
         ),
@@ -163,7 +189,7 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, messages: value })
             }
-            trackColor={{ false: Colors.neutral[300], true: Colors.primary[400] }}
+            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
             thumbColor={Colors.background.card}
           />
         ),
@@ -178,7 +204,7 @@ export default function SettingsScreen() {
             onValueChange={(value) =>
               setNotifications({ ...notifications, events: value })
             }
-            trackColor={{ false: Colors.neutral[300], true: Colors.primary[400] }}
+            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
             thumbColor={Colors.background.card}
           />
         ),
@@ -197,7 +223,7 @@ export default function SettingsScreen() {
           <Switch
             value={darkMode}
             onValueChange={setDarkMode}
-            trackColor={{ false: Colors.neutral[300], true: Colors.primary[400] }}
+            trackColor={{ false: Colors.slate[300], true: Colors.primary[400] }}
             thumbColor={Colors.background.card}
           />
         ),
@@ -213,7 +239,7 @@ export default function SettingsScreen() {
         title: 'Şifre Değiştir',
         subtitle: 'Hesap şifrenizi güncelleyin',
         action: () => Alert.alert('Bilgi', 'Şifre değiştirme ekranı açılacak'),
-        rightElement: <ChevronRight color={Colors.neutral[400]} size={20} strokeWidth={2} />,
+        rightElement: <ChevronRight color={Colors.slate[400]} size={20} strokeWidth={2} />,
       },
     ],
   };
@@ -279,8 +305,18 @@ export default function SettingsScreen() {
         entering={FadeInDown.delay(50)}
         style={styles.userCard}
       >
+        <LinearGradient
+          colors={isAdmin ? Gradients.heroCard : Gradients.sharing}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.userRoleIndicator}
+        >
+          <Text style={styles.userRoleText}>
+            {isAdmin ? 'YÖNETİCİ' : 'SAKİN'}
+          </Text>
+        </LinearGradient>
         <View style={styles.userAvatar}>
-          <User color={Colors.neutral[500]} size={32} strokeWidth={2} />
+          <User color={Colors.slate[500]} size={32} strokeWidth={2} />
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.userName}>
@@ -299,6 +335,7 @@ export default function SettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {[
+          roletSection,
           profileSection,
           notificationSection,
           appearanceSection,
@@ -325,7 +362,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: Colors.slate[50],
   },
   header: {
     flexDirection: 'row',
@@ -334,13 +371,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     backgroundColor: Colors.background.secondary,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
   },
   headerTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 24,
-    color: Colors.neutral[800],
+    color: Colors.slate[800],
   },
   editButton: {
     paddingVertical: Spacing.xs,
@@ -354,38 +389,47 @@ const styles = StyleSheet.create({
     color: Colors.primary[600],
   },
   userCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
     margin: Spacing.lg,
-    padding: Spacing.base,
+    padding: Spacing.lg,
     backgroundColor: Colors.background.card,
-    borderRadius: BorderRadius.xl,
+    borderRadius: BorderRadius['2xl'],
     ...Shadows.md,
-    borderWidth: 1,
-    borderColor: Colors.neutral[100],
+  },
+  userRoleIndicator: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderTopRightRadius: BorderRadius['2xl'],
+    borderBottomLeftRadius: BorderRadius.lg,
+  },
+  userRoleText: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 10,
+    color: Colors.text.inverse,
+    letterSpacing: 0.5,
   },
   userAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: Colors.slate[100],
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md,
+    marginBottom: Spacing.md,
   },
-  userInfo: {
-    flex: 1,
-  },
+  userInfo: {},
   userName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 18,
-    color: Colors.neutral[800],
+    color: Colors.slate[800],
     marginBottom: 4,
   },
   userLocation: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: Colors.slate[500],
   },
   scrollView: {
     flex: 1,
@@ -400,17 +444,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 16,
-    color: Colors.neutral[700],
+    color: Colors.slate[700],
     marginBottom: Spacing.sm,
     marginLeft: Spacing.xs,
   },
   sectionContent: {
     backgroundColor: Colors.background.card,
-    borderRadius: BorderRadius.xl,
+    borderRadius: BorderRadius['2xl'],
     overflow: 'hidden',
     ...Shadows.sm,
-    borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   settingItem: {
     paddingVertical: Spacing.md,
@@ -419,7 +461,7 @@ const styles = StyleSheet.create({
   },
   settingItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: Colors.slate[100],
   },
   settingRow: {
     flexDirection: 'row',
@@ -446,28 +488,39 @@ const styles = StyleSheet.create({
   settingTitle: {
     fontFamily: 'Inter-Medium',
     fontSize: 15,
-    color: Colors.neutral[800],
+    color: Colors.slate[800],
     marginBottom: 2,
   },
   settingSubtitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.neutral[500],
+    color: Colors.slate[500],
   },
   settingValue: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.neutral[600],
+    color: Colors.slate[600],
   },
   editInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.neutral[800],
+    color: Colors.slate[800],
     textAlign: 'right',
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary[500],
     minWidth: 100,
     paddingVertical: 2,
+  },
+  roleToggle: {
+    paddingVertical: Spacing.xs + 2,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: Colors.primary[600],
+    borderRadius: BorderRadius.lg,
+  },
+  roleToggleText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 13,
+    color: Colors.text.inverse,
   },
   logoutContainer: {
     paddingHorizontal: Spacing.lg,
@@ -480,7 +533,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     backgroundColor: Colors.status.error,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
+    borderRadius: BorderRadius['2xl'],
     ...Shadows.md,
   },
   logoutText: {
@@ -491,7 +544,7 @@ const styles = StyleSheet.create({
   versionText: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.neutral[400],
+    color: Colors.slate[400],
     textAlign: 'center',
     marginTop: Spacing['2xl'],
     marginBottom: Spacing.lg,

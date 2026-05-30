@@ -9,10 +9,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { ArrowLeft, FileText, Download, Eye, Folder, Calendar, HardDrive } from 'lucide-react-native';
+import { ArrowLeft, FileText, Download, Eye, Folder, Calendar, HardDrive, Plus } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { mockDocuments } from '@/utils/mockData';
 import { Document } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 const docTypeConfig = {
   pdf: {
@@ -86,6 +87,7 @@ function DocumentCard({ document, index }: { document: Document; index: number }
 
 export default function DocumentsScreen() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
 
   return (
     <>
@@ -96,7 +98,7 @@ export default function DocumentsScreen() {
           headerTitleStyle: {
             fontFamily: 'Inter-SemiBold',
             fontSize: 18,
-            color: Colors.neutral[800],
+            color: Colors.slate[800],
           },
           headerStyle: {
             backgroundColor: Colors.background.secondary,
@@ -106,7 +108,7 @@ export default function DocumentsScreen() {
               onPress={() => router.back()}
               style={styles.backButton}
             >
-              <ArrowLeft color={Colors.neutral[700]} size={24} strokeWidth={2} />
+              <ArrowLeft color={Colors.slate[700]} size={24} strokeWidth={2} />
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
@@ -141,6 +143,16 @@ export default function DocumentsScreen() {
           ))}
         </ScrollView>
       </SafeAreaView>
+
+      {/* Floating Action Button - Only for Admin */}
+      {isAdmin && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => {}}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
+      )}
     </>
   );
 }
@@ -290,5 +302,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Medium',
     fontSize: 13,
     color: Colors.secondary[700],
+  },
+  fab: {
+    position: 'absolute',
+    right: Spacing['2xl'],
+    bottom: Spacing['2xl'],
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.primary[600],
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.lg,
+  },
+  fabText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 32,
+    color: Colors.text.inverse,
+    marginTop: -2,
   },
 });
