@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -23,9 +24,13 @@ import {
   MessageSquare,
   Home,
   ChevronRight,
+  Check,
+  Building2,
 } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
-import { currentUser, siteInfo } from '@/utils/mockData';
+import { currentUser } from '@/utils/mockData';
+import { useAuth } from '@/context/AuthContext';
+import { useSite } from '@/context/SiteContext';
 
 const menuItems = [
   {
@@ -96,6 +101,9 @@ const menuItems = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { isAdmin } = useAuth();
+  const { currentSite, setSite, availableSites } = useSite();
+  const [siteModalVisible, setSiteModalVisible] = useState(false);
 
   const getInitials = () => {
     return `${currentUser.name.charAt(0)}${currentUser.surname.charAt(0)}`;
@@ -121,12 +129,12 @@ export default function HomeScreen() {
             <Text style={styles.logo}>Apartmanım</Text>
           </View>
           <Text style={styles.locationText}>
-            {siteInfo.name} • {currentUser.block} • D:{currentUser.floor}
+            {currentSite.name} • {currentUser.block} • D:{currentUser.floor}
           </Text>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.notificationButton}>
-            <Bell color={Colors.neutral[700]} size={24} strokeWidth={2} />
+            <Bell color={Colors.slate[700]} size={24} strokeWidth={2} />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
           <View style={styles.avatarContainer}>
@@ -147,9 +155,12 @@ export default function HomeScreen() {
       >
         <View style={styles.siteBarLeft}>
           <Text style={styles.activeSiteLabel}>AKTİF SITE</Text>
-          <Text style={styles.activeSiteName}>{siteInfo.name}</Text>
+          <Text style={styles.activeSiteName}>{currentSite.name}</Text>
         </View>
-        <TouchableOpacity style={styles.changeSiteButton}>
+        <TouchableOpacity
+          style={styles.changeSiteButton}
+          onPress={() => setSiteModalVisible(true)}
+        >
           <Text style={styles.changeSiteText}>Değiştir</Text>
           <ChevronRight color={Colors.primary[600]} size={16} strokeWidth={2} />
         </TouchableOpacity>
@@ -209,6 +220,71 @@ export default function HomeScreen() {
           ))}
         </View>
       </ScrollView>
+
+      {/* Site Selector Modal */}
+      <Modal
+        visible={siteModalVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setSiteModalVisible(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Site Seçin</Text>
+            <TouchableOpacity
+              onPress={() => setSiteModalVisible(false)}
+              style={styles.closeButton}
+            >
+              <Text style={styles.closeButtonText}>Kapat</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.modalContent}>
+            {availableSites.map((site) => {
+              const isSelected = currentSite.id === site.id;
+              return (
+                <TouchableOpacity
+                  key={site.id}
+                  style={[
+                    styles.siteOption,
+                    isSelected && styles.siteOptionSelected,
+                  ]}
+                  onPress={() => {
+                    setSite(site.id);
+                    setSiteModalVisible(false);
+                  }}
+                >
+                  <View style={styles.siteOptionContent}>
+                    <View style={styles.siteIconContainer}>
+                      <Building2
+                        color={isSelected ? Colors.primary[600] : Colors.slate[500]}
+                        size={24}
+                        strokeWidth={2}
+                      />
+                    </View>
+                    <View style={styles.siteInfo}>
+                      <Text
+                        style={[
+                          styles.siteName,
+                          isSelected && styles.siteNameSelected,
+                        ]}
+                      >
+                        {site.name}
+                      </Text>
+                      <Text style={styles.siteAddress}>{site.address}</Text>
+                    </View>
+                  </View>
+                  {isSelected && (
+                    <View style={styles.checkContainer}>
+                      <Check color={Colors.primary[600]} size={24} strokeWidth={3} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -396,5 +472,92 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.slate[500],
     textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: Colors.slate[50],
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.background.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.slate[200],
+  },
+  modalTitle: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 20,
+    color: Colors.slate[800],
+  },
+  closeButton: {
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    backgroundColor: Colors.primary[600],
+    borderRadius: BorderRadius.lg,
+  },
+  closeButtonText: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    color: Colors.text.inverse,
+  },
+  modalContent: {
+    padding: Spacing.lg,
+  },
+  siteOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.background.secondary,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.base,
+    marginBottom: Spacing.sm,
+    borderWidth: 2,
+    borderColor: Colors.slate[200],
+  },
+  siteOptionSelected: {
+    borderColor: Colors.primary[600],
+    backgroundColor: Colors.primary[50],
+  },
+  siteOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  siteIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.slate[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  siteInfo: {
+    flex: 1,
+  },
+  siteName: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
+    color: Colors.slate[700],
+    marginBottom: 2,
+  },
+  siteNameSelected: {
+    color: Colors.primary[700],
+  },
+  siteAddress: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    color: Colors.slate[500],
+  },
+  checkContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.primary[100],
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

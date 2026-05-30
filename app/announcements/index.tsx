@@ -19,6 +19,7 @@ import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { mockAnnouncements } from '@/utils/mockData';
 import { Announcement } from '@/types';
 import { useAuth } from '@/context/AuthContext';
+import { useSite } from '@/context/SiteContext';
 
 const priorityConfig = {
   urgent: {
@@ -83,11 +84,17 @@ function AnnouncementCard({ announcement, index }: { announcement: Announcement;
 export default function AnnouncementsScreen() {
   const router = useRouter();
   const { isAdmin } = useAuth();
+  const { currentSite } = useSite();
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [newPriority, setNewPriority] = useState<'urgent' | 'warning' | 'info'>('info');
+
+  // Filter announcements by current site
+  const filteredAnnouncements = announcements.filter(
+    (announcement) => announcement.siteId === currentSite.id
+  );
 
   const handleAddAnnouncement = () => {
     if (!newTitle.trim() || !newContent.trim()) return;
@@ -99,6 +106,7 @@ export default function AnnouncementsScreen() {
       priority: newPriority,
       author: 'Site Yönetimi',
       createdAt: new Date(),
+      siteId: currentSite.id,
     };
 
     setAnnouncements([newAnnouncement, ...announcements]);
@@ -140,13 +148,21 @@ export default function AnnouncementsScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {announcements.map((announcement, index) => (
+          {filteredAnnouncements.map((announcement, index) => (
             <AnnouncementCard
               key={announcement.id}
               announcement={announcement}
               index={index}
             />
           ))}
+
+          {filteredAnnouncements.length === 0 && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>
+                Bu site için henüz duyuru bulunmuyor
+              </Text>
+            </View>
+          )}
         </ScrollView>
 
         {/* Floating Action Button - Only for Admin */}
@@ -238,5 +254,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.text.inverse,
     marginTop: -2,
+  },
+  emptyState: {
+    padding: Spacing['3xl'],
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
+    color: Colors.slate[500],
+    textAlign: 'center',
   },
 });

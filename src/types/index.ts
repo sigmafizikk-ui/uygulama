@@ -33,6 +33,7 @@ export interface Announcement {
   priority: 'urgent' | 'warning' | 'info';
   author: string;
   createdAt: Date;
+  siteId: string;
 }
 
 export interface ShareItem {
@@ -44,6 +45,7 @@ export interface ShareItem {
   floor: number;
   image?: string;
   createdAt: Date;
+  siteId: string;
 }
 
 export interface Neighbor {

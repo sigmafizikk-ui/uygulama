@@ -1,17 +1,47 @@
 import { Announcement, ShareItem, Neighbor, FaultReport, Event, Document } from '@/types';
 
-// Site structure with multiple apartments
-export const siteInfo = {
-  name: 'Güneş Sitesi',
-  address: 'Mahalle: Yıldız Mahallesi, Kadıköy/İstanbul',
-  totalBlocks: 4,
-  totalApartments: 120,
-  management: {
-    president: 'Ahmet Yılmaz',
-    phone: '0532 111 22 33',
-    email: 'yonetim@gunessitesi.com',
+// Multi-tenant site configuration
+export const sites = [
+  {
+    id: 'gunes',
+    name: 'Güneş Sitesi',
+    address: 'Yıldız Mahallesi, Kadıköy/İstanbul',
+    totalBlocks: 4,
+    totalApartments: 120,
+    management: {
+      president: 'Ahmet Yılmaz',
+      phone: '0532 111 22 33',
+      email: 'yonetim@gunessitesi.com',
+    },
   },
-};
+  {
+    id: 'yildiz',
+    name: 'Yıldız Sitesi',
+    address: 'Çiçekli Mahallesi, Beşiktaş/İstanbul',
+    totalBlocks: 3,
+    totalApartments: 90,
+    management: {
+      president: 'Ayşe Demir',
+      phone: '0533 222 33 44',
+      email: 'yonetim@yildizsitesi.com',
+    },
+  },
+  {
+    id: 'yesilvadi',
+    name: 'Yeşilvadi Sitesi',
+    address: 'Vadi Mahallesi, Ümraniye/İstanbul',
+    totalBlocks: 2,
+    totalApartments: 60,
+    management: {
+      president: 'Mehmet Kaya',
+      phone: '0534 333 44 55',
+      email: 'yonetim@yesilvadisitesi.com',
+    },
+  },
+];
+
+// Default site for backward compatibility
+export const siteInfo = sites[0];
 
 export const blocks = [
   { id: 'A', name: 'A Blok', apartments: 30, floors: 5 },
@@ -21,76 +51,166 @@ export const blocks = [
 ];
 
 export const mockAnnouncements: Announcement[] = [
+  // Güneş Sitesi Announcements
   {
-    id: '1',
-    title: 'Site Genel Kurul Toplantısı',
-    content: 'Pazar günü saat 10:00\'da site sosyal tesislerinde olağan genel kurul toplantısı yapılacaktır. Tüm blok temsilcilerinin katılımı zorunludur. Gündem: 2026 bütçesi ve ortak alan tadilatı.',
-    priority: 'urgent',
+    id: 'g1',
+    title: 'Güneş Sitesi Havuz Temizliği',
+    content: 'Bu hafta sonu site havuzu temizlenecektir. Havuz kullanımı Pazar gününe kadar askıya alınmıştır.',
+    priority: 'info',
     author: 'Site Yönetimi',
     createdAt: new Date('2026-05-29T14:20:00'),
+    siteId: 'gunes',
   },
   {
-    id: '2',
-    title: 'A Blok Asansör Bakımı',
-    content: 'Cumartesi günü saat 10:00 - 12:00 arasında A Blok asansör bakımı yapılacaktır. Lütfen bu saatler arasında asansörü kullanmayınız.',
-    priority: 'warning',
-    author: 'A Blok Yönetici Ahmet',
+    id: 'g2',
+    title: 'Güneş Sitesi Genel Kurul',
+    content: 'Pazar günü saat 10:00\'da sosyal tesislerde genel kurul toplantısı yapılacaktır.',
+    priority: 'urgent',
+    author: 'Site Yönetimi',
     createdAt: new Date('2026-05-29T10:15:00'),
+    siteId: 'gunes',
   },
   {
-    id: '3',
-    title: 'Site Çocuk Parkı Yenilenmesi',
-    content: 'Site çocuk parkı için yeni oyun grupları alındı. Salı günü montaj yapılacak, çocuklarımızın oynaması için Perşembe gününden itibaren hazır olacak.',
-    priority: 'info',
-    author: 'Site Yönetimi',
+    id: 'g3',
+    title: 'A Blok Asansör Bakımı',
+    content: 'Cumartesi 10:00-12:00 arası A Blok asansör bakımı yapılacaktır.',
+    priority: 'warning',
+    author: 'A Blok Yönetici',
     createdAt: new Date('2026-05-28T16:45:00'),
+    siteId: 'gunes',
+  },
+  // Yıldız Sitesi Announcements
+  {
+    id: 'y1',
+    title: 'Yıldız Sitesi Otopark Çizgileri Boyanması',
+    content: 'Salı günü otopark zemin çizgileri yenilenecektir. Lütfen araçlarınızı otoparktan çekiniz.',
+    priority: 'urgent',
+    author: 'Site Yönetimi',
+    createdAt: new Date('2026-05-29T13:00:00'),
+    siteId: 'yildiz',
   },
   {
-    id: '4',
-    title: 'Aidat Ödeme Hatırlatması',
-    content: 'Mayıs ayı aidat ödemelerinin son tarihi 5 Haziran\'dır. Site aidatları: A Blok 800 TL, B Blok 750 TL, C Blok 850 TL, D Blok 700 TL.',
+    id: 'y2',
+    title: 'Yıldız Sitesi Su Deposu Temizliği',
+    content: 'Cuma günü ana su deposu temizliği yapılacaktır. Su kesintisi yaşanmayacaktır.',
     priority: 'info',
     author: 'Site Yönetimi',
+    createdAt: new Date('2026-05-28T11:00:00'),
+    siteId: 'yildiz',
+  },
+  {
+    id: 'y3',
+    title: 'B Blok Bahçe Bakımı',
+    content: 'Bu hafta B Blok bahçesinde ağaç budama yapılacaktır.',
+    priority: 'warning',
+    author: 'B Blok Yönetici',
     createdAt: new Date('2026-05-27T09:00:00'),
+    siteId: 'yildiz',
+  },
+  // Yeşilvadi Sitesi Announcements
+  {
+    id: 'ye1',
+    title: 'Yeşilvadi Sitesi Güvenlik Toplantısı',
+    content: 'Salı akşamı saat 19:00\'da güvenlik önlemleri hakkında toplantı yapılacaktır.',
+    priority: 'urgent',
+    author: 'Site Yönetimi',
+    createdAt: new Date('2026-05-29T15:00:00'),
+    siteId: 'yesilvadi',
+  },
+  {
+    id: 'ye2',
+    title: 'Yeşilvadi Sitesi Yüzme Havuzu Açılışı',
+    content: 'Yaz sezonu için site havuzu hafta sonundan itibaren açılacaktır.',
+    priority: 'info',
+    author: 'Site Yönetimi',
+    createdAt: new Date('2026-05-28T14:00:00'),
+    siteId: 'yesilvadi',
   },
 ];
 
 export const mockShareItems: ShareItem[] = [
+  // Güneş Sitesi Items
   {
-    id: '1',
+    id: 'g1',
     type: 'borrowing',
     title: 'Ödünç Matkap Aranıyor',
-    description: 'Duvara raf asmak için bu akşamlık matkaba ihtiyacım var. İşi bitince hemen teslim ederim.',
+    description: 'Duvara raf asmak için bu akşamlık matkaba ihtiyacım var.',
     owner: 'Mehmet',
     floor: 3,
     createdAt: new Date('2026-05-29T11:00:00'),
+    siteId: 'gunes',
   },
   {
-    id: '2',
+    id: 'g2',
     type: 'sharing',
     title: 'Merdiven Paylaşımı',
-    description: 'Evde işi biten 3 basamaklı alüminyum merdiven var. İhtiyacı olan komşular kullanabilir.',
+    description: 'Evde işi biten 3 basamaklı alüminyum merdiven var.',
     owner: 'Ayşe',
     floor: 2,
     createdAt: new Date('2026-05-28T15:30:00'),
+    siteId: 'gunes',
   },
   {
-    id: '3',
+    id: 'g3',
     type: 'borrowing',
     title: 'Tornavida Seti Lazım',
-    description: 'Bazı mobilyaları sökmek için tornavida setine ihtiyacım var. 1-2 saatlik iş.',
+    description: 'Mobilyaları sökmek için tornavida setine ihtiyacım var.',
     owner: 'Ali',
     floor: 4,
     createdAt: new Date('2026-05-27T18:00:00'),
+    siteId: 'gunes',
   },
+  // Yıldız Sitesi Items
   {
-    id: '4',
+    id: 'y1',
     type: 'sharing',
-    title: 'Yemek Fazlası',
-    description: 'Misafir için fazla yapılan yemekten kalan var. İsteyen komşularımız alabilir.',
+    title: 'Çocuk Bisikleti',
+    description: '4-6 yaş arası çocuk bisikleti kullanıma hazır, isteyen komşular alabilir.',
     owner: 'Fatma',
     floor: 1,
     createdAt: new Date('2026-05-29T13:00:00'),
+    siteId: 'yildiz',
+  },
+  {
+    id: 'y2',
+    type: 'borrowing',
+    title: 'Saatlik El Arabası Lazım',
+    description: 'Bahçe işleri için 1-2 saatliğine el arabasına ihtiyacım var.',
+    owner: 'Hasan',
+    floor: 3,
+    createdAt: new Date('2026-05-28T16:00:00'),
+    siteId: 'yildiz',
+  },
+  {
+    id: 'y3',
+    type: 'sharing',
+    title: 'Bahçe Mobilyası',
+    description: 'Yeni mobilya aldığım için eski bahçe takımı ücretsiz verilecektir.',
+    owner: 'Zeynep',
+    floor: 2,
+    createdAt: new Date('2026-05-27T14:00:00'),
+    siteId: 'yildiz',
+  },
+  // Yeşilvadi Sitesi Items
+  {
+    id: 'ye1',
+    type: 'borrowing',
+    title: 'Buharlı Ütü Aranıyor',
+    description: 'Yarın tören için ütü yapmam gerekiyor, buharlı ütü ödünç alabilir miyim?',
+    owner: 'Elif',
+    floor: 2,
+    createdAt: new Date('2026-05-29T12:00:00'),
+    siteId: 'yesilvadi',
+  },
+  {
+    id: 'ye2',
+    type: 'sharing',
+    title: 'Kitap Takası',
+    description: 'Okunmuş romanlar takas edilir veya ücretsiz verilir.',
+    owner: 'Can',
+    floor: 1,
+    createdAt: new Date('2026-05-28T10:00:00'),
+    siteId: 'yesilvadi',
   },
 ];
 

@@ -19,6 +19,7 @@ import { ArrowLeft, Plus, X } from 'lucide-react-native';
 import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
 import { mockShareItems, currentUser } from '@/utils/mockData';
 import { ShareItem } from '@/types';
+import { useSite } from '@/context/SiteContext';
 
 const tabs = [
   { id: 'all', label: 'Tümü' },
@@ -77,6 +78,7 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
 
 export default function SharingScreen() {
   const router = useRouter();
+  const { currentSite } = useSite();
   const [activeTab, setActiveTab] = useState('all');
   const [shareItems, setShareItems] = useState<ShareItem[]>(mockShareItems);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -84,9 +86,12 @@ export default function SharingScreen() {
   const [newItemTitle, setNewItemTitle] = useState('');
   const [newItemDescription, setNewItemDescription] = useState('');
 
+  // Filter items by current site and type
+  const siteItems = shareItems.filter(item => item.siteId === currentSite.id);
+
   const filteredItems = activeTab === 'all'
-    ? shareItems
-    : shareItems.filter(item => item.type === activeTab);
+    ? siteItems
+    : siteItems.filter(item => item.type === activeTab);
 
   const handleAddItem = () => {
     if (!newItemTitle.trim() || !newItemDescription.trim()) {
@@ -102,6 +107,7 @@ export default function SharingScreen() {
       owner: `${currentUser.name} ${currentUser.surname}`,
       floor: currentUser.floor,
       createdAt: new Date(),
+      siteId: currentSite.id,
     };
 
     setShareItems([newItem, ...shareItems]);
