@@ -1,9 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Home, Settings } from 'lucide-react-native';
 import { Platform, StyleSheet } from 'react-native';
-import { Colors } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 export default function TabLayout() {
+  const Colors = useThemeColors();
+
   return (
     <>
       <Tabs
@@ -22,7 +24,7 @@ export default function TabLayout() {
             shadowRadius: 12,
           },
           tabBarActiveTintColor: Colors.primary[600],
-          tabBarInactiveTintColor: Colors.slate[400],
+          tabBarInactiveTintColor: Colors.text.tertiary,
           tabBarLabelStyle: {
             fontFamily: 'Inter-Medium',
             fontSize: 11,

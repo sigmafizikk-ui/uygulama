@@ -15,7 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft, X } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockAnnouncements } from '@/utils/mockData';
 import { Announcement } from '@/types';
 import { useAuth } from '@/context/AuthContext';
@@ -57,23 +58,23 @@ function formatDate(date: Date): string {
   }
 }
 
-function AnnouncementCard({ announcement, index }: { announcement: Announcement; index: number }) {
+function AnnouncementCard({ announcement, index, Colors }: { announcement: Announcement; index: number; Colors: any }) {
   const config = priorityConfig[announcement.priority];
 
   return (
     <Animated.View
       entering={FadeInDown.delay(50 + index * 70)}
-      style={styles.card}
+      style={[styles.card, { backgroundColor: Colors.background.card }]}
     >
       <View style={[styles.priorityBadge, { backgroundColor: config.background, borderColor: config.border }]}>
         <Text style={[styles.priorityText, { color: config.text }]}>
           {config.label}
         </Text>
       </View>
-      <Text style={styles.cardTitle}>{announcement.title}</Text>
-      <Text style={styles.cardContent}>{announcement.content}</Text>
-      <View style={styles.cardFooter}>
-        <Text style={styles.cardMeta}>
+      <Text style={[styles.cardTitle, { color: Colors.text.primary }]}>{announcement.title}</Text>
+      <Text style={[styles.cardContent, { color: Colors.text.secondary }]}>{announcement.content}</Text>
+      <View style={[styles.cardFooter, { borderTopColor: Colors.slate[200] }]}>
+        <Text style={[styles.cardMeta, { color: Colors.text.tertiary }]}>
           {announcement.author} • {formatDate(announcement.createdAt)}
         </Text>
       </View>
@@ -85,6 +86,7 @@ export default function AnnouncementsScreen() {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const { currentSite } = useSite();
+  const Colors = useThemeColors();
   const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -125,24 +127,24 @@ export default function AnnouncementsScreen() {
           headerTitleStyle: {
             fontFamily: 'Inter-SemiBold',
             fontSize: 18,
-            color: Colors.slate[800],
           },
           headerStyle: {
             backgroundColor: Colors.background.secondary,
           },
+          headerTintColor: Colors.text.primary,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.backButton}
             >
-              <ArrowLeft color={Colors.slate[700]} size={24} strokeWidth={2} />
+              <ArrowLeft color={Colors.text.primary} size={24} strokeWidth={2} />
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.primary }]} edges={['bottom']}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -153,12 +155,13 @@ export default function AnnouncementsScreen() {
               key={announcement.id}
               announcement={announcement}
               index={index}
+              Colors={Colors}
             />
           ))}
 
           {filteredAnnouncements.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Text style={[styles.emptyText, { color: Colors.text.secondary }]}>
                 Bu site için henüz duyuru bulunmuyor
               </Text>
             </View>
@@ -168,7 +171,7 @@ export default function AnnouncementsScreen() {
         {/* Floating Action Button - Only for Admin */}
         {isAdmin && (
           <TouchableOpacity
-            style={styles.fab}
+            style={[styles.fab, { backgroundColor: Colors.primary[600] }]}
             onPress={() => setIsModalVisible(true)}
           >
             <Text style={styles.fabText}>+</Text>
@@ -182,7 +185,6 @@ export default function AnnouncementsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   backButton: {
     marginLeft: Spacing.sm,

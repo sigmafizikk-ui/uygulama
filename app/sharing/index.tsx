@@ -16,7 +16,8 @@ import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Plus, X } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockShareItems, currentUser } from '@/utils/mockData';
 import { ShareItem } from '@/types';
 import { useSite } from '@/context/SiteContext';
@@ -40,11 +41,12 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
   };
 
   const config = typeConfig[item.type];
+  const Colors = useThemeColors();
 
   return (
     <Animated.View
       entering={FadeInDown.delay(50 + index * 80)}
-      style={styles.card}
+      style={[styles.card, { backgroundColor: Colors.background.card }]}
     >
       <View style={styles.cardHeader}>
         <LinearGradient
@@ -63,12 +65,12 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
               {config.label}
             </Text>
           </View>
-          <Text style={styles.cardTitle}>{item.title}</Text>
+          <Text style={[styles.cardTitle, { color: Colors.text.primary }]}>{item.title}</Text>
         </View>
       </View>
-      <Text style={styles.cardDescription}>{item.description}</Text>
-      <View style={styles.cardFooter}>
-        <Text style={styles.cardOwner}>
+      <Text style={[styles.cardDescription, { color: Colors.text.secondary }]}>{item.description}</Text>
+      <View style={[styles.cardFooter, { borderTopColor: Colors.slate[200] }]}>
+        <Text style={[styles.cardOwner, { color: Colors.text.tertiary }]}>
           {item.owner} • Kat {item.floor}
         </Text>
       </View>
@@ -79,6 +81,7 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
 export default function SharingScreen() {
   const router = useRouter();
   const { currentSite } = useSite();
+  const Colors = useThemeColors();
   const [activeTab, setActiveTab] = useState('all');
   const [shareItems, setShareItems] = useState<ShareItem[]>(mockShareItems);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -127,24 +130,24 @@ export default function SharingScreen() {
           headerTitleStyle: {
             fontFamily: 'Inter-SemiBold',
             fontSize: 18,
-            color: Colors.slate[800],
           },
           headerStyle: {
             backgroundColor: Colors.background.secondary,
           },
+          headerTintColor: Colors.text.primary,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.backButton}
             >
-              <ArrowLeft color={Colors.slate[700]} size={24} strokeWidth={2} />
+              <ArrowLeft color={Colors.text.primary} size={24} strokeWidth={2} />
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.primary }]} edges={['bottom']}>
         {/* Tabs */}
         <View style={styles.tabsContainer}>
           {tabs.map((tab) => (
@@ -152,14 +155,15 @@ export default function SharingScreen() {
               key={tab.id}
               style={[
                 styles.tab,
-                activeTab === tab.id && styles.tabActive,
+                activeTab === tab.id && { backgroundColor: Colors.primary[600] },
               ]}
               onPress={() => setActiveTab(tab.id)}
             >
               <Text
                 style={[
                   styles.tabText,
-                  activeTab === tab.id && styles.tabTextActive,
+                  { color: Colors.text.secondary },
+                  activeTab === tab.id && { color: '#FFFFFF' },
                 ]}
               >
                 {tab.label}
@@ -174,7 +178,7 @@ export default function SharingScreen() {
           showsVerticalScrollIndicator={false}
         >
           {filteredItems.map((item, index) => (
-            <ShareCard key={item.id} item={item} index={index} />
+            <ShareCard key={item.id} item={item} index={index} Colors={Colors} />
           ))}
 
           {filteredItems.length === 0 && (

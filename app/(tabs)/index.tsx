@@ -13,7 +13,6 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Bell,
-  User,
   Megaphone,
   Share2,
   Users,
@@ -27,7 +26,8 @@ import {
   Check,
   Building2,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows, Gradients } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { currentUser } from '@/utils/mockData';
 import { useAuth } from '@/context/AuthContext';
 import { useSite } from '@/context/SiteContext';
@@ -103,6 +103,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { isAdmin } = useAuth();
   const { currentSite, setSite, availableSites } = useSite();
+  const Colors = useThemeColors();
   const [siteModalVisible, setSiteModalVisible] = useState(false);
 
   const getInitials = () => {
@@ -110,11 +111,11 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.primary }]} edges={['top']}>
       {/* Header */}
       <Animated.View
         entering={FadeIn.delay(100)}
-        style={styles.header}
+        style={[styles.header, { backgroundColor: Colors.background.secondary }]}
       >
         <View style={styles.headerLeft}>
           <View style={styles.logoRow}>
@@ -126,15 +127,15 @@ export default function HomeScreen() {
             >
               <Home color={Colors.text.inverse} size={18} strokeWidth={2.5} />
             </LinearGradient>
-            <Text style={styles.logo}>Apartmanım</Text>
+            <Text style={[styles.logo, { color: Colors.text.primary }]}>Apartmanım</Text>
           </View>
-          <Text style={styles.locationText}>
+          <Text style={[styles.locationText, { color: Colors.text.secondary }]}>
             {currentSite.name} • {currentUser.block} • D:{currentUser.floor}
           </Text>
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity style={styles.notificationButton}>
-            <Bell color={Colors.slate[700]} size={24} strokeWidth={2} />
+            <Bell color={Colors.text.primary} size={24} strokeWidth={2} />
             <View style={styles.notificationBadge} />
           </TouchableOpacity>
           <View style={styles.avatarContainer}>
@@ -151,17 +152,17 @@ export default function HomeScreen() {
       {/* Active Site Bar */}
       <Animated.View
         entering={FadeIn.delay(150)}
-        style={styles.siteBar}
+        style={[styles.siteBar, { backgroundColor: Colors.background.secondary, borderColor: Colors.slate[200] }]}
       >
         <View style={styles.siteBarLeft}>
-          <Text style={styles.activeSiteLabel}>AKTİF SITE</Text>
-          <Text style={styles.activeSiteName}>{currentSite.name}</Text>
+          <Text style={[styles.activeSiteLabel, { color: Colors.text.tertiary }]}>AKTİF SITE</Text>
+          <Text style={[styles.activeSiteName, { color: Colors.text.primary }]}>{currentSite.name}</Text>
         </View>
         <TouchableOpacity
-          style={styles.changeSiteButton}
+          style={[styles.changeSiteButton, { backgroundColor: Colors.primary[50] }]}
           onPress={() => setSiteModalVisible(true)}
         >
-          <Text style={styles.changeSiteText}>Değiştir</Text>
+          <Text style={[styles.changeSiteText, { color: Colors.primary[600] }]}>Değiştir</Text>
           <ChevronRight color={Colors.primary[600]} size={16} strokeWidth={2} />
         </TouchableOpacity>
       </Animated.View>
@@ -194,30 +195,33 @@ export default function HomeScreen() {
 
         {/* Menu Grid */}
         <View style={styles.grid}>
-          {menuItems.map((item, index) => (
-            <Animated.View
-              key={item.id}
-              entering={FadeInDown.delay(300 + index * 70)}
-              style={styles.gridItem}
-            >
-              <TouchableOpacity
-                style={styles.menuCard}
-                onPress={() => router.push(item.route)}
-                activeOpacity={0.8}
+          {menuItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <Animated.View
+                key={item.id}
+                entering={FadeInDown.delay(300 + index * 70)}
+                style={styles.gridItem}
               >
-                <LinearGradient
-                  colors={item.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.iconContainer}
+                <TouchableOpacity
+                  style={[styles.menuCard, { backgroundColor: Colors.background.card }]}
+                  onPress={() => router.push(item.route)}
+                  activeOpacity={0.8}
                 >
-                  <item.icon color={Colors.text.inverse} size={26} strokeWidth={2} />
-                </LinearGradient>
-                <Text style={styles.menuTitle}>{item.title}</Text>
-                <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
+                  <LinearGradient
+                    colors={item.gradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.iconContainer}
+                  >
+                    <Icon color={Colors.text.inverse} size={26} strokeWidth={2} />
+                  </LinearGradient>
+                  <Text style={[styles.menuTitle, { color: Colors.text.primary }]}>{item.title}</Text>
+                  <Text style={[styles.menuSubtitle, { color: Colors.text.secondary }]}>{item.subtitle}</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          })}
         </View>
       </ScrollView>
 
@@ -228,12 +232,12 @@ export default function HomeScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setSiteModalVisible(false)}
       >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Site Seçin</Text>
+        <SafeAreaView style={[styles.modalContainer, { backgroundColor: Colors.background.primary }]}>
+          <View style={[styles.modalHeader, { backgroundColor: Colors.background.secondary, borderBottomColor: Colors.slate[200] }]}>
+            <Text style={[styles.modalTitle, { color: Colors.text.primary }]}>Site Seçin</Text>
             <TouchableOpacity
               onPress={() => setSiteModalVisible(false)}
-              style={styles.closeButton}
+              style={[styles.closeButton, { backgroundColor: Colors.primary[600] }]}
             >
               <Text style={styles.closeButtonText}>Kapat</Text>
             </TouchableOpacity>
@@ -247,7 +251,8 @@ export default function HomeScreen() {
                   key={site.id}
                   style={[
                     styles.siteOption,
-                    isSelected && styles.siteOptionSelected,
+                    { backgroundColor: Colors.background.secondary, borderColor: Colors.slate[200] },
+                    isSelected && { borderColor: Colors.primary[600], backgroundColor: Colors.primary[50] },
                   ]}
                   onPress={() => {
                     setSite(site.id);
@@ -255,9 +260,9 @@ export default function HomeScreen() {
                   }}
                 >
                   <View style={styles.siteOptionContent}>
-                    <View style={styles.siteIconContainer}>
+                    <View style={[styles.siteIconContainer, { backgroundColor: Colors.slate[100] }]}>
                       <Building2
-                        color={isSelected ? Colors.primary[600] : Colors.slate[500]}
+                        color={isSelected ? Colors.primary[600] : Colors.text.secondary}
                         size={24}
                         strokeWidth={2}
                       />
@@ -266,16 +271,17 @@ export default function HomeScreen() {
                       <Text
                         style={[
                           styles.siteName,
-                          isSelected && styles.siteNameSelected,
+                          { color: Colors.text.primary },
+                          isSelected && { color: Colors.primary[700] },
                         ]}
                       >
                         {site.name}
                       </Text>
-                      <Text style={styles.siteAddress}>{site.address}</Text>
+                      <Text style={[styles.siteAddress, { color: Colors.text.secondary }]}>{site.address}</Text>
                     </View>
                   </View>
                   {isSelected && (
-                    <View style={styles.checkContainer}>
+                    <View style={[styles.checkContainer, { backgroundColor: Colors.primary[100] }]}>
                       <Check color={Colors.primary[600]} size={24} strokeWidth={3} />
                     </View>
                   )}
@@ -292,7 +298,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   header: {
     flexDirection: 'row',
@@ -301,7 +306,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.secondary,
   },
   headerLeft: {
     flex: 1,
@@ -322,12 +326,10 @@ const styles = StyleSheet.create({
   logo: {
     fontFamily: 'Inter-Bold',
     fontSize: 20,
-    color: Colors.slate[800],
   },
   locationText: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.slate[500],
   },
   headerRight: {
     flexDirection: 'row',
@@ -345,9 +347,9 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: Colors.status.error,
+    backgroundColor: '#EF4444',
     borderWidth: 2,
-    borderColor: Colors.background.secondary,
+    borderColor: '#FFFFFF',
   },
   avatarContainer: {},
   avatar: {
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
   },
   siteBar: {
     flexDirection: 'row',
@@ -370,10 +372,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.slate[200],
     ...Shadows.sm,
   },
   siteBarLeft: {
@@ -384,13 +384,11 @@ const styles = StyleSheet.create({
   activeSiteLabel: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 10,
-    color: Colors.slate[400],
     letterSpacing: 0.5,
   },
   activeSiteName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.slate[700],
   },
   changeSiteButton: {
     flexDirection: 'row',
@@ -398,13 +396,11 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
-    backgroundColor: Colors.primary[50],
     borderRadius: BorderRadius.lg,
   },
   changeSiteText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.primary[600],
   },
   scrollView: {
     flex: 1,
@@ -426,13 +422,13 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 22,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
     marginBottom: Spacing.xs,
   },
   heroSubtitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
     opacity: 0.9,
   },
   grid: {
@@ -446,7 +442,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   menuCard: {
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
     alignItems: 'center',
@@ -463,19 +458,16 @@ const styles = StyleSheet.create({
   menuTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.slate[800],
     marginBottom: 2,
     textAlign: 'center',
   },
   menuSubtitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.slate[500],
     textAlign: 'center',
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   modalHeader: {
     flexDirection: 'row',
@@ -483,25 +475,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.secondary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.slate[200],
   },
   modalTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 20,
-    color: Colors.slate[800],
   },
   closeButton: {
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary[600],
     borderRadius: BorderRadius.lg,
   },
   closeButtonText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.text.inverse,
+    color: '#FFFFFF',
   },
   modalContent: {
     padding: Spacing.lg,
@@ -510,16 +498,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
     borderWidth: 2,
-    borderColor: Colors.slate[200],
-  },
-  siteOptionSelected: {
-    borderColor: Colors.primary[600],
-    backgroundColor: Colors.primary[50],
   },
   siteOptionContent: {
     flexDirection: 'row',
@@ -530,7 +512,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.slate[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -541,22 +522,16 @@ const styles = StyleSheet.create({
   siteName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.slate[700],
     marginBottom: 2,
-  },
-  siteNameSelected: {
-    color: Colors.primary[700],
   },
   siteAddress: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.slate[500],
   },
   checkContainer: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.primary[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
