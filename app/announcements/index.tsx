@@ -174,7 +174,7 @@ export default function AnnouncementsScreen() {
             style={[styles.fab, { backgroundColor: Colors.primary[600] }]}
             onPress={() => setIsModalVisible(true)}
           >
-            <Text style={styles.fabText}>+</Text>
+            <Text style={[styles.fabText, { color: Colors.text.inverse }]}>+</Text>
           </TouchableOpacity>
         )}
       </SafeAreaView>
@@ -233,7 +233,6 @@ const styles = StyleSheet.create({
   cardMeta: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.slate[500],
   },
   fab: {
     position: 'absolute',
@@ -242,7 +241,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.lg,
@@ -250,7 +248,6 @@ const styles = StyleSheet.create({
   fabText: {
     fontFamily: 'Inter-Regular',
     fontSize: 32,
-    color: Colors.text.inverse,
     marginTop: -2,
   },
   emptyState: {
@@ -260,7 +257,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Inter-Regular',
     fontSize: 15,
-    color: Colors.slate[500],
     textAlign: 'center',
   },
 });

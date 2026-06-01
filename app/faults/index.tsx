@@ -69,14 +69,14 @@ function FaultCard({
   return (
     <Animated.View
       entering={FadeInDown.delay(50 + index * 50)}
-      style={styles.faultCard}
+      style={[styles.faultCard, { backgroundColor: Colors.background.secondary }]}
     >
       <View style={styles.faultContent}>
-        <Text style={styles.faultTitle}>{report.title}</Text>
-        <Text style={styles.faultDescription} numberOfLines={2}>
+        <Text style={[styles.faultTitle, { color: Colors.slate[800] }]}>{report.title}</Text>
+        <Text style={[styles.faultDescription, { color: Colors.slate[600] }]} numberOfLines={2}>
           {report.description}
         </Text>
-        <Text style={styles.faultDate}>
+        <Text style={[styles.faultDate, { color: Colors.slate[500] }]}>
           {report.createdAt.toLocaleDateString('tr-TR')}
         </Text>
       </View>
@@ -91,18 +91,31 @@ function FaultCard({
           <View style={styles.adminActions}>
             {report.status === 'pending' && (
               <TouchableOpacity
-                style={styles.statusButton}
+                style={[
+                  styles.statusButton,
+                  {
+                    backgroundColor: Colors.primary[50],
+                    borderColor: Colors.primary[200],
+                  },
+                ]}
                 onPress={() => onStatusChange(report.id, 'in_progress')}
               >
-                <Text style={styles.statusButtonText}>İşleme Al</Text>
+                <Text style={[styles.statusButtonText, { color: Colors.primary[700] }]}>İşleme Al</Text>
               </TouchableOpacity>
             )}
             {report.status === 'in_progress' && (
               <TouchableOpacity
-                style={[styles.statusButton, styles.statusButtonResolve]}
+                style={[
+                  styles.statusButton,
+                  styles.statusButtonResolve,
+                  {
+                    backgroundColor: Colors.emerald[50],
+                    borderColor: Colors.emerald[200],
+                  },
+                ]}
                 onPress={() => onStatusChange(report.id, 'resolved')}
               >
-                <Text style={styles.statusButtonText}>Çözüldü</Text>
+                <Text style={[styles.statusButtonText, { color: Colors.primary[700] }]}>Çözüldü</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -183,23 +196,27 @@ export default function FaultsScreen() {
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.slate[50] }]} edges={['bottom']}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* New Request Form */}
-          <View style={styles.formCard}>
+          <View style={[styles.formCard, { backgroundColor: Colors.background.secondary }]}>
             {/* Request Target */}
             <View style={styles.targetSection}>
-              <Text style={styles.sectionLabel}>Talep Yönü</Text>
+              <Text style={[styles.sectionLabel, { color: Colors.slate[700] }]}>Talep Yönü</Text>
               <View style={styles.targetButtons}>
                 {requestTargets.map((target) => (
                   <TouchableOpacity
                     key={target.id}
                     style={[
                       styles.targetButton,
+                      {
+                        backgroundColor: selectedTarget === target.id ? Colors.primary[600] : Colors.slate[100],
+                        borderColor: selectedTarget === target.id ? Colors.primary[600] : Colors.slate[200],
+                      },
                       selectedTarget === target.id && styles.targetButtonActive,
                     ]}
                     onPress={() => setSelectedTarget(target.id)}
@@ -207,6 +224,9 @@ export default function FaultsScreen() {
                     <Text
                       style={[
                         styles.targetButtonText,
+                        {
+                          color: selectedTarget === target.id ? Colors.text.inverse : Colors.slate[600],
+                        },
                         selectedTarget === target.id && styles.targetButtonTextActive,
                       ]}
                     >
@@ -219,13 +239,17 @@ export default function FaultsScreen() {
 
             {/* Category Selection */}
             <View style={styles.categorySection}>
-              <Text style={styles.sectionLabel}>Kategori</Text>
+              <Text style={[styles.sectionLabel, { color: Colors.slate[700] }]}>Kategori</Text>
               <View style={styles.categoryGrid}>
                 {categories.map((cat) => (
                   <TouchableOpacity
                     key={cat.id}
                     style={[
                       styles.categoryButton,
+                      {
+                        backgroundColor: selectedCategory === cat.id ? Colors.primary[600] : Colors.slate[100],
+                        borderColor: selectedCategory === cat.id ? Colors.primary[600] : Colors.slate[200],
+                      },
                       selectedCategory === cat.id && styles.categoryButtonActive,
                     ]}
                     onPress={() => setSelectedCategory(cat.id)}
@@ -233,6 +257,9 @@ export default function FaultsScreen() {
                     <Text
                       style={[
                         styles.categoryText,
+                        {
+                          color: selectedCategory === cat.id ? Colors.text.inverse : Colors.slate[600],
+                        },
                         selectedCategory === cat.id && styles.categoryTextActive,
                       ]}
                     >
@@ -245,10 +272,17 @@ export default function FaultsScreen() {
 
             {/* Description Input */}
             <View style={styles.inputSection}>
-              <Text style={styles.sectionLabel}>Sorun Açıklaması</Text>
+              <Text style={[styles.sectionLabel, { color: Colors.slate[700] }]}>Sorun Açıklaması</Text>
               <TextInput
-                style={styles.textInput}
-                placeholder="Sorunu kısaca açıklayın..."
+                style={[
+                  styles.textInput,
+                  {
+                    color: Colors.slate[800],
+                    backgroundColor: Colors.slate[50],
+                    borderColor: Colors.slate[200],
+                  },
+                ]}
+                placeholder="Sorunu kısca açıklayın..."
                 placeholderTextColor={Colors.slate[400]}
                 value={description}
                 onChangeText={setDescription}
@@ -259,9 +293,17 @@ export default function FaultsScreen() {
 
             {/* Photo Upload */}
             <View style={styles.photoSection}>
-              <TouchableOpacity style={styles.photoButton}>
+              <TouchableOpacity
+                style={[
+                  styles.photoButton,
+                  {
+                    backgroundColor: Colors.slate[50],
+                    borderColor: Colors.slate[300],
+                  },
+                ]}
+              >
                 <Camera color={Colors.slate[500]} size={24} strokeWidth={2} />
-                <Text style={styles.photoButtonText}>Fotoğraf Ekle</Text>
+                <Text style={[styles.photoButtonText, { color: Colors.slate[600] }]}>Fotoğraf Ekle</Text>
               </TouchableOpacity>
             </View>
 
@@ -269,18 +311,20 @@ export default function FaultsScreen() {
             <TouchableOpacity
               style={[
                 styles.submitButton,
-                !description.trim() && styles.submitButtonDisabled,
+                {
+                  backgroundColor: !description.trim() ? Colors.slate[300] : Colors.primary[600],
+                },
               ]}
               onPress={handleSubmit}
               disabled={!description.trim()}
             >
-              <Text style={styles.submitButtonText}>Talebi Gönder</Text>
+              <Text style={[styles.submitButtonText, { color: Colors.text.inverse }]}>Talebi Gönder</Text>
             </TouchableOpacity>
           </View>
 
           {/* History Section */}
           <View style={styles.historySection}>
-            <Text style={styles.historyTitle}>GEÇMİŞ TALEPLERİM</Text>
+            <Text style={[styles.historyTitle, { color: Colors.slate[500] }]}>GEÇMİŞ TALEPLERİM</Text>
             {faultReports.map((report, index) => (
               <FaultCard
                 key={report.id}
@@ -293,7 +337,7 @@ export default function FaultsScreen() {
 
             {faultReports.length === 0 && (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>Henüz bir talebiniz bulunmuyor</Text>
+                <Text style={[styles.emptyText, { color: Colors.slate[500] }]}>Henüz bir talebiniz bulunmuyor</Text>
               </View>
             )}
           </View>
@@ -306,7 +350,6 @@ export default function FaultsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -320,7 +363,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'],
   },
   formCard: {
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.xl,
     marginBottom: Spacing['2xl'],
@@ -332,7 +374,6 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 13,
-    color: Colors.slate[700],
     marginBottom: Spacing.sm,
   },
   targetButtons: {
@@ -345,21 +386,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     alignItems: 'center',
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.slate[100],
     borderWidth: 1,
-    borderColor: Colors.slate[200],
   },
   targetButtonActive: {
-    backgroundColor: Colors.primary[600],
-    borderColor: Colors.primary[600],
+    borderWidth: 1,
   },
   targetButtonText: {
     fontFamily: 'Inter-Medium',
     fontSize: 14,
-    color: Colors.slate[600],
   },
   targetButtonTextActive: {
-    color: Colors.text.inverse,
     fontFamily: 'Inter-SemiBold',
   },
   categorySection: {
@@ -374,21 +410,16 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.slate[100],
     borderWidth: 1,
-    borderColor: Colors.slate[200],
   },
   categoryButtonActive: {
-    backgroundColor: Colors.primary[600],
-    borderColor: Colors.primary[600],
+    borderWidth: 1,
   },
   categoryText: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.slate[600],
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
     fontFamily: 'Inter-Medium',
   },
   inputSection: {
@@ -397,12 +428,9 @@ const styles = StyleSheet.create({
   textInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 15,
-    color: Colors.slate[800],
-    backgroundColor: Colors.slate[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.slate[200],
     minHeight: 100,
   },
   photoSection: {
@@ -413,37 +441,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.slate[50],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing.lg,
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: Colors.slate[300],
   },
   photoButtonText: {
     fontFamily: 'Inter-Medium',
     fontSize: 14,
-    color: Colors.slate[600],
   },
   submitButton: {
-    backgroundColor: Colors.primary[600],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing.base + 2,
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: Colors.slate[300],
   },
   submitButtonText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.text.inverse,
   },
   historySection: {},
   historyTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 11,
-    color: Colors.slate[500],
     letterSpacing: 0.5,
     marginBottom: Spacing.md,
   },
@@ -451,7 +472,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.sm,
@@ -467,20 +487,17 @@ const styles = StyleSheet.create({
   faultTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 15,
-    color: Colors.slate[800],
     marginBottom: 2,
   },
   faultDescription: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.slate[600],
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },
   faultDate: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.slate[500],
   },
   statusBadge: {
     paddingVertical: Spacing.xs,
@@ -499,19 +516,15 @@ const styles = StyleSheet.create({
   statusButton: {
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
-    backgroundColor: Colors.primary[50],
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.primary[200],
   },
   statusButtonResolve: {
-    backgroundColor: Colors.emerald[50],
-    borderColor: Colors.emerald[200],
+    borderWidth: 1,
   },
   statusButtonText: {
     fontFamily: 'Inter-Medium',
     fontSize: 11,
-    color: Colors.primary[700],
   },
   emptyState: {
     padding: Spacing['2xl'],
@@ -520,6 +533,5 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.slate[500],
   },
 });

@@ -43,7 +43,7 @@ function DocumentCard({ document, index }: { document: Document; index: number }
   return (
     <Animated.View
       entering={FadeInDown.delay(100 + index * 100)}
-      style={styles.documentCard}
+      style={[styles.documentCard, { backgroundColor: Colors.background.card, borderColor: Colors.neutral[100] }]}
     >
       <View style={styles.documentMain}>
         <View
@@ -55,33 +55,33 @@ function DocumentCard({ document, index }: { document: Document; index: number }
           <FileText color={config.color} size={28} strokeWidth={2} />
         </View>
         <View style={styles.documentInfo}>
-          <Text style={styles.documentName} numberOfLines={2}>
+          <Text style={[styles.documentName, { color: Colors.neutral[800] }]} numberOfLines={2}>
             {document.name}
           </Text>
           <View style={styles.documentMeta}>
             <View style={styles.metaItem}>
               <Calendar color={Colors.neutral[400]} size={12} strokeWidth={2} />
-              <Text style={styles.metaText}>
+              <Text style={[styles.metaText, { color: Colors.neutral[500] }]}>
                 {document.uploadedAt.toLocaleDateString('tr-TR')}
               </Text>
             </View>
             {document.size && (
               <View style={styles.metaItem}>
                 <HardDrive color={Colors.neutral[400]} size={12} strokeWidth={2} />
-                <Text style={styles.metaText}>{document.size}</Text>
+                <Text style={[styles.metaText, { color: Colors.neutral[500] }]}>{document.size}</Text>
               </View>
             )}
           </View>
         </View>
       </View>
-      <View style={styles.documentActions}>
-        <TouchableOpacity style={styles.viewButton}>
+      <View style={[styles.documentActions, { borderTopColor: Colors.neutral[100] }]}>
+        <TouchableOpacity style={[styles.viewButton, { backgroundColor: Colors.primary[50], borderColor: Colors.primary[200] }]}>
           <Eye color={Colors.primary[600]} size={18} strokeWidth={2} />
-          <Text style={styles.viewButtonText}>Görüntüle</Text>
+          <Text style={[styles.viewButtonText, { color: Colors.primary[700] }]}>Görüntüle</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.downloadButton}>
+        <TouchableOpacity style={[styles.downloadButton, { backgroundColor: Colors.secondary[50], borderColor: Colors.secondary[200] }]}>
           <Download color={Colors.secondary[600]} size={18} strokeWidth={2} />
-          <Text style={styles.downloadButtonText}>İndir</Text>
+          <Text style={[styles.downloadButtonText, { color: Colors.secondary[700] }]}>İndir</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -119,16 +119,16 @@ export default function DocumentsScreen() {
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.neutral[50] }]} edges={['bottom']}>
         {/* Folder Info Section */}
         <View style={styles.folderSection}>
-          <View style={styles.folderCard}>
-            <View style={styles.folderIconContainer}>
+          <View style={[styles.folderCard, { backgroundColor: Colors.primary[50], borderColor: Colors.primary[100] }]}>
+            <View style={[styles.folderIconContainer, { backgroundColor: Colors.background.card }]}>
               <Folder color={Colors.primary[600]} size={32} strokeWidth={2} />
             </View>
             <View style={styles.folderInfo}>
-              <Text style={styles.folderTitle}>Apartman Belgeleri</Text>
-              <Text style={styles.folderCount}>
+              <Text style={[styles.folderTitle, { color: Colors.neutral[800] }]}>Apartman Belgeleri</Text>
+              <Text style={[styles.folderCount, { color: Colors.neutral[500] }]}>
                 {mockDocuments.length} belge
               </Text>
             </View>
@@ -141,7 +141,7 @@ export default function DocumentsScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.sectionTitle}>Tüm Belgeler</Text>
+          <Text style={[styles.sectionTitle, { color: Colors.neutral[800] }]}>Tüm Belgeler</Text>
           {mockDocuments.map((document, index) => (
             <DocumentCard key={document.id} document={document} index={index} />
           ))}
@@ -151,10 +151,10 @@ export default function DocumentsScreen() {
       {/* Floating Action Button - Only for Admin */}
       {isAdmin && (
         <TouchableOpacity
-          style={styles.fab}
+          style={[styles.fab, { backgroundColor: Colors.primary[600] }]}
           onPress={() => {}}
         >
-          <Text style={styles.fabText}>+</Text>
+          <Text style={[styles.fabText, { color: Colors.text.inverse }]}>+</Text>
         </TouchableOpacity>
       )}
     </>
@@ -164,7 +164,6 @@ export default function DocumentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -177,18 +176,15 @@ const styles = StyleSheet.create({
   folderCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primary[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.primary[100],
   },
   folderIconContainer: {
     width: 56,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius.lg,
     marginRight: Spacing.md,
   },
@@ -198,13 +194,11 @@ const styles = StyleSheet.create({
   folderTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.neutral[800],
     marginBottom: 2,
   },
   folderCount: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.neutral[500],
   },
   scrollView: {
     flex: 1,
@@ -216,17 +210,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 20,
-    color: Colors.neutral[800],
     marginBottom: Spacing.md,
   },
   documentCard: {
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
     ...Shadows.sm,
     borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   documentMain: {
     flexDirection: 'row',
@@ -247,7 +238,6 @@ const styles = StyleSheet.create({
   documentName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 15,
-    color: Colors.neutral[800],
     marginBottom: Spacing.xs,
     lineHeight: 20,
   },
@@ -264,12 +254,10 @@ const styles = StyleSheet.create({
   metaText: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.neutral[500],
   },
   documentActions: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[100],
     paddingTop: Spacing.base,
     gap: Spacing.sm,
   },
@@ -279,16 +267,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.primary[50],
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.primary[200],
   },
   viewButtonText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.primary[700],
   },
   downloadButton: {
     flex: 1,
@@ -296,16 +281,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.secondary[50],
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.secondary[200],
   },
   downloadButtonText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.secondary[700],
   },
   fab: {
     position: 'absolute',
@@ -314,7 +296,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.lg,
@@ -322,7 +303,6 @@ const styles = StyleSheet.create({
   fabText: {
     fontFamily: 'Inter-Regular',
     fontSize: 32,
-    color: Colors.text.inverse,
     marginTop: -2,
   },
 });

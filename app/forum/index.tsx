@@ -44,24 +44,24 @@ function formatTimeAgo(date: Date): string {
 function ReplyItem({ reply, index }: { reply: ForumReply; index: number }) {
   const Colors = useThemeColors();
   return (
-    <View style={styles.replyItem}>
+    <View style={[styles.replyItem, { backgroundColor: Colors.neutral[50] }]}>
       <View style={styles.replyHeader}>
-        <View style={styles.replyAuthorAvatar}>
-          <Text style={styles.replyAuthorInitials}>
+        <View style={[styles.replyAuthorAvatar, { backgroundColor: Colors.secondary[100] }]}>
+          <Text style={[styles.replyAuthorInitials, { color: Colors.secondary[600] }]}>
             {reply.author.charAt(0)}
           </Text>
         </View>
         <View style={styles.replyAuthorInfo}>
-          <Text style={styles.replyAuthorName}>{reply.author}</Text>
-          <Text style={styles.replyMeta}>
+          <Text style={[styles.replyAuthorName, { color: Colors.neutral[700] }]}>{reply.author}</Text>
+          <Text style={[styles.replyMeta, { color: Colors.neutral[500] }]}>
             {reply.authorBlock} - {reply.authorApartment} • {formatTimeAgo(reply.createdAt)}
           </Text>
         </View>
       </View>
-      <Text style={styles.replyContent}>{reply.content}</Text>
+      <Text style={[styles.replyContent, { color: Colors.neutral[600] }]}>{reply.content}</Text>
       <TouchableOpacity style={styles.replyLikeButton}>
         <Heart color={Colors.neutral[400]} size={14} strokeWidth={2} />
-        <Text style={styles.replyLikeCount}>{reply.likes}</Text>
+        <Text style={[styles.replyLikeCount, { color: Colors.neutral[500] }]}>{reply.likes}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -93,7 +93,13 @@ function ForumPostCard({
   return (
     <Animated.View
       entering={FadeInDown.delay(100 + index * 100)}
-      style={styles.postCard}
+      style={[
+        styles.postCard,
+        {
+          backgroundColor: Colors.background.card,
+          borderColor: Colors.neutral[100],
+        },
+      ]}
     >
       <View style={styles.postHeader}>
         <View style={[styles.categoryBadge, { backgroundColor: config.color + '20' }]}>
@@ -102,45 +108,45 @@ function ForumPostCard({
             {config.label}
           </Text>
         </View>
-        <Text style={styles.postTime}>{formatTimeAgo(post.createdAt)}</Text>
+        <Text style={[styles.postTime, { color: Colors.neutral[500] }]}>{formatTimeAgo(post.createdAt)}</Text>
       </View>
 
-      <Text style={styles.postTitle}>{post.title}</Text>
-      <Text style={styles.postContent}>{post.content}</Text>
+      <Text style={[styles.postTitle, { color: Colors.neutral[800] }]}>{post.title}</Text>
+      <Text style={[styles.postContent, { color: Colors.neutral[600] }]}>{post.content}</Text>
 
       <View style={styles.authorRow}>
-        <View style={styles.authorAvatar}>
-          <Text style={styles.authorInitials}>
+        <View style={[styles.authorAvatar, { backgroundColor: Colors.primary[100] }]}>
+          <Text style={[styles.authorInitials, { color: Colors.primary[600] }]}>
             {post.author.charAt(0)}
           </Text>
         </View>
         <View style={styles.authorInfo}>
-          <Text style={styles.authorName}>{post.author}</Text>
-          <Text style={styles.authorMeta}>
+          <Text style={[styles.authorName, { color: Colors.neutral[700] }]}>{post.author}</Text>
+          <Text style={[styles.authorMeta, { color: Colors.neutral[500] }]}>
             {post.authorBlock} - {post.authorApartment}
           </Text>
         </View>
       </View>
 
-      <View style={styles.postStats}>
+      <View style={[styles.postStats, { borderBottomColor: Colors.neutral[100] }]}>
         <View style={styles.postStat}>
           <Heart color={Colors.status.error} size={16} strokeWidth={2} />
-          <Text style={styles.postStatNumber}>{post.likes}</Text>
+          <Text style={[styles.postStatNumber, { color: Colors.neutral[600] }]}>{post.likes}</Text>
         </View>
         <View style={styles.postStat}>
           <MessageCircle color={Colors.primary[500]} size={16} strokeWidth={2} />
-          <Text style={styles.postStatNumber}>{post.replies.length}</Text>
+          <Text style={[styles.postStatNumber, { color: Colors.neutral[600] }]}>{post.replies.length}</Text>
         </View>
         <View style={styles.postStat}>
           <Eye color={Colors.neutral[400]} size={16} strokeWidth={2} />
-          <Text style={styles.postStatNumber}>{post.views}</Text>
+          <Text style={[styles.postStatNumber, { color: Colors.neutral[600] }]}>{post.views}</Text>
         </View>
       </View>
 
       {/* Replies Section */}
       {post.replies.length > 0 && (
         <TouchableOpacity style={styles.repliesToggle} onPress={onToggle}>
-          <Text style={styles.repliesToggleText}>
+          <Text style={[styles.repliesToggleText, { color: Colors.primary[600] }]}>
             {isExpanded ? 'Gizle' : `${post.replies.length} cevap`}
           </Text>
           {isExpanded ? (
@@ -152,7 +158,7 @@ function ForumPostCard({
       )}
 
       {isExpanded && (
-        <View style={styles.repliesContainer}>
+        <View style={[styles.repliesContainer, { borderTopColor: Colors.neutral[100] }]}>
           {post.replies.map((reply, replyIndex) => (
             <ReplyItem key={reply.id} reply={reply} index={replyIndex} />
           ))}
@@ -160,11 +166,17 @@ function ForumPostCard({
           {/* Quick Reply */}
           <View style={styles.quickReplyContainer}>
             <TextInput
-              style={styles.quickReplyInput}
+              style={[
+                styles.quickReplyInput,
+                {
+                  backgroundColor: Colors.neutral[100],
+                  color: Colors.neutral[800],
+                },
+              ]}
               placeholder="Cevap yazın..."
               placeholderTextColor={Colors.neutral[400]}
             />
-            <TouchableOpacity style={styles.quickReplyButton}>
+            <TouchableOpacity style={[styles.quickReplyButton, { backgroundColor: Colors.primary[600] }]}>
               <Send color={Colors.text.inverse} size={18} strokeWidth={2} />
             </TouchableOpacity>
           </View>
@@ -228,20 +240,32 @@ export default function ForumScreen() {
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.neutral[50] }]} edges={['bottom']}>
         {/* Category Filters */}
-        <View style={styles.filtersContainer}>
+        <View
+          style={[
+            styles.filtersContainer,
+            {
+              backgroundColor: Colors.background.secondary,
+              borderBottomColor: Colors.neutral[200],
+            },
+          ]}
+        >
           <TouchableOpacity
             style={[
               styles.filterButton,
-              !activeCategory && styles.filterButtonActive,
+              {
+                backgroundColor: !activeCategory ? Colors.primary[600] : Colors.neutral[100],
+              },
             ]}
             onPress={() => setActiveCategory(null)}
           >
             <Text
               style={[
                 styles.filterText,
-                !activeCategory && styles.filterTextActive,
+                {
+                  color: !activeCategory ? Colors.text.inverse : Colors.neutral[600],
+                },
               ]}
             >
               Tümü
@@ -254,7 +278,9 @@ export default function ForumScreen() {
                 key={key}
                 style={[
                   styles.filterButton,
-                  activeCategory === key && styles.filterButtonActive,
+                  {
+                    backgroundColor: activeCategory === key ? Colors.primary[600] : Colors.neutral[100],
+                  },
                 ]}
                 onPress={() => setActiveCategory(key)}
               >
@@ -266,7 +292,9 @@ export default function ForumScreen() {
                 <Text
                   style={[
                     styles.filterText,
-                    activeCategory === key && styles.filterTextActive,
+                    {
+                      color: activeCategory === key ? Colors.text.inverse : Colors.neutral[600],
+                    },
                   ]}
                 >
                   {config.label}
@@ -294,7 +322,7 @@ export default function ForumScreen() {
 
           {filteredPosts.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Text style={[styles.emptyText, { color: Colors.neutral[500] }]}>
                 Bu kategoride henüz gönderi yok
               </Text>
             </View>
@@ -303,7 +331,7 @@ export default function ForumScreen() {
 
         {/* Floating Action Button */}
         <TouchableOpacity
-          style={styles.fab}
+          style={[styles.fab, { backgroundColor: Colors.primary[600] }]}
           onPress={() => setIsNewPostModalVisible(true)}
         >
           <Plus color={Colors.text.inverse} size={28} strokeWidth={2.5} />
@@ -316,20 +344,28 @@ export default function ForumScreen() {
           presentationStyle="pageSheet"
           onRequestClose={() => setIsNewPostModalVisible(false)}
         >
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
+          <SafeAreaView style={[styles.modalContainer, { backgroundColor: Colors.background.secondary }]}>
+            <View
+              style={[
+                styles.modalHeader,
+                {
+                  backgroundColor: Colors.background.secondary,
+                  borderBottomColor: Colors.neutral[200],
+                },
+              ]}
+            >
               <TouchableOpacity onPress={() => setIsNewPostModalVisible(false)}>
-                <Text style={styles.modalCancel}>İptal</Text>
+                <Text style={[styles.modalCancel, { color: Colors.neutral[500] }]}>İptal</Text>
               </TouchableOpacity>
-              <Text style={styles.modalTitle}>Yeni Gönderi</Text>
-              <TouchableOpacity style={styles.modalSubmit}>
-                <Text style={styles.modalSubmitText}>Paylaş</Text>
+              <Text style={[styles.modalTitle, { color: Colors.neutral[800] }]}>Yeni Gönderi</Text>
+              <TouchableOpacity style={[styles.modalSubmit, { backgroundColor: Colors.primary[600] }]}>
+                <Text style={[styles.modalSubmitText, { color: Colors.text.inverse }]}>Paylaş</Text>
               </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.modalContent}>
               <View style={styles.categorySelector}>
-                <Text style={styles.inputLabel}>Kategori</Text>
+                <Text style={[styles.inputLabel, { color: Colors.neutral[700] }]}>Kategori</Text>
                 <View style={styles.categoryButtons}>
                   {Object.entries(categoryConfig).map(([key, config]) => {
                     const Icon = config.icon;
@@ -338,7 +374,10 @@ export default function ForumScreen() {
                         key={key}
                         style={[
                           styles.categorySelectorButton,
-                          newPostCategory === key && styles.categorySelectorButtonActive,
+                          {
+                            backgroundColor: newPostCategory === key ? Colors.primary[600] : Colors.neutral[100],
+                            borderColor: newPostCategory === key ? Colors.primary[600] : Colors.neutral[200],
+                          },
                         ]}
                         onPress={() => setNewPostCategory(key as typeof newPostCategory)}
                       >
@@ -350,7 +389,9 @@ export default function ForumScreen() {
                         <Text
                           style={[
                             styles.categorySelectorText,
-                            newPostCategory === key && styles.categorySelectorTextActive,
+                            {
+                              color: newPostCategory === key ? Colors.text.inverse : Colors.neutral[600],
+                            },
                           ]}
                         >
                           {config.label}
@@ -362,9 +403,16 @@ export default function ForumScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Başlık</Text>
+                <Text style={[styles.inputLabel, { color: Colors.neutral[700] }]}>Başlık</Text>
                 <TextInput
-                  style={styles.titleInput}
+                  style={[
+                    styles.titleInput,
+                    {
+                      color: Colors.neutral[800],
+                      backgroundColor: Colors.neutral[50],
+                      borderColor: Colors.neutral[200],
+                    },
+                  ]}
                   placeholder="Başlık yazın..."
                   placeholderTextColor={Colors.neutral[400]}
                   value={newPostTitle}
@@ -373,9 +421,16 @@ export default function ForumScreen() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Mesajınız</Text>
+                <Text style={[styles.inputLabel, { color: Colors.neutral[700] }]}>Mesajınız</Text>
                 <TextInput
-                  style={styles.contentInput}
+                  style={[
+                    styles.contentInput,
+                    {
+                      color: Colors.neutral[800],
+                      backgroundColor: Colors.neutral[50],
+                      borderColor: Colors.neutral[200],
+                    },
+                  ]}
                   placeholder="Mesajınızı yazın..."
                   placeholderTextColor={Colors.neutral[400]}
                   value={newPostContent}
@@ -395,7 +450,6 @@ export default function ForumScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -406,9 +460,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     gap: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
   },
   filterButton: {
     flexDirection: 'row',
@@ -416,19 +468,15 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.neutral[100],
     borderRadius: BorderRadius.lg,
   },
   filterButtonActive: {
-    backgroundColor: Colors.primary[600],
   },
   filterText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[600],
   },
   filterTextActive: {
-    color: Colors.text.inverse,
   },
   scrollView: {
     flex: 1,
@@ -438,13 +486,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'] + 80,
   },
   postCard: {
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     ...Shadows.md,
     borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   postHeader: {
     flexDirection: 'row',
@@ -467,19 +513,16 @@ const styles = StyleSheet.create({
   postTime: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.neutral[500],
   },
   postTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 18,
-    color: Colors.neutral[800],
     marginBottom: Spacing.sm,
   },
   postContent: {
     fontFamily: 'Inter-Regular',
     fontSize: 15,
     lineHeight: 22,
-    color: Colors.neutral[600],
     marginBottom: Spacing.base,
   },
   authorRow: {
@@ -491,7 +534,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primary[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.sm,
@@ -499,7 +541,6 @@ const styles = StyleSheet.create({
   authorInitials: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.primary[600],
   },
   authorInfo: {
     flex: 1,
@@ -507,19 +548,16 @@ const styles = StyleSheet.create({
   authorName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.neutral[700],
   },
   authorMeta: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.neutral[500],
   },
   postStats: {
     flexDirection: 'row',
     gap: Spacing.lg,
     paddingBottom: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
   },
   postStat: {
     flexDirection: 'row',
@@ -529,7 +567,6 @@ const styles = StyleSheet.create({
   postStatNumber: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[600],
   },
   repliesToggle: {
     flexDirection: 'row',
@@ -542,16 +579,13 @@ const styles = StyleSheet.create({
   repliesToggleText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.primary[600],
   },
   repliesContainer: {
     marginTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[100],
     paddingTop: Spacing.base,
   },
   replyItem: {
-    backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
@@ -565,7 +599,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.secondary[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.sm,
@@ -573,7 +606,6 @@ const styles = StyleSheet.create({
   replyAuthorInitials: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.secondary[600],
   },
   replyAuthorInfo: {
     flex: 1,
@@ -581,18 +613,15 @@ const styles = StyleSheet.create({
   replyAuthorName: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[700],
   },
   replyMeta: {
     fontFamily: 'Inter-Regular',
     fontSize: 11,
-    color: Colors.neutral[500],
   },
   replyContent: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: Colors.neutral[600],
     marginBottom: Spacing.sm,
   },
   replyLikeButton: {
@@ -604,7 +633,6 @@ const styles = StyleSheet.create({
   replyLikeCount: {
     fontFamily: 'Inter-Medium',
     fontSize: 12,
-    color: Colors.neutral[500],
   },
   quickReplyContainer: {
     flexDirection: 'row',
@@ -614,19 +642,16 @@ const styles = StyleSheet.create({
   },
   quickReplyInput: {
     flex: 1,
-    backgroundColor: Colors.neutral[100],
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     fontFamily: 'Inter-Regular',
     fontSize: 14,
-    color: Colors.neutral[800],
   },
   quickReplyButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -637,7 +662,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Inter-Regular',
     fontSize: 16,
-    color: Colors.neutral[500],
   },
   fab: {
     position: 'absolute',
@@ -646,14 +670,12 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.lg,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -662,28 +684,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
   },
   modalCancel: {
     fontFamily: 'Inter-Medium',
     fontSize: 16,
-    color: Colors.neutral[500],
   },
   modalTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 18,
-    color: Colors.neutral[800],
   },
   modalSubmit: {
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.primary[600],
     borderRadius: BorderRadius.md,
   },
   modalSubmitText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.text.inverse,
   },
   modalContent: {
     padding: Spacing.lg,
@@ -694,7 +711,6 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.neutral[700],
     marginBottom: Spacing.sm,
   },
   categoryButtons: {
@@ -708,22 +724,17 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.neutral[100],
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
   },
   categorySelectorButtonActive: {
-    backgroundColor: Colors.primary[600],
-    borderColor: Colors.primary[600],
+    borderWidth: 1,
   },
   categorySelectorText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[600],
   },
   categorySelectorTextActive: {
-    color: Colors.text.inverse,
   },
   inputGroup: {
     marginBottom: Spacing.xl,
@@ -731,22 +742,16 @@ const styles = StyleSheet.create({
   titleInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 16,
-    color: Colors.neutral[800],
-    backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
   },
   contentInput: {
     fontFamily: 'Inter-Regular',
     fontSize: 16,
-    color: Colors.neutral[800],
-    backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
     minHeight: 150,
   },
 });

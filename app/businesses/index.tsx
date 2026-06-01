@@ -209,28 +209,23 @@ export default function BusinessesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
     padding: Spacing.xs,
   },
   infoBanner: {
-    backgroundColor: Colors.secondary[50],
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.secondary[200],
   },
   infoText: {
     fontFamily: 'Inter-Medium',
     fontSize: 14,
-    color: Colors.secondary[700],
     textAlign: 'center',
   },
   categoriesScroll: {
     flexGrow: 0,
-    backgroundColor: Colors.background.secondary,
   },
   categoriesContent: {
     paddingHorizontal: Spacing.md,
@@ -243,20 +238,16 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.neutral[100],
     borderRadius: BorderRadius.lg,
     marginRight: Spacing.sm,
   },
   categoryButtonActive: {
-    backgroundColor: Colors.primary[600],
   },
   categoryText: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.neutral[600],
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
   },
   scrollView: {
     flex: 1,
@@ -266,13 +257,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'],
   },
   card: {
-    backgroundColor: Colors.background.card,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
     ...Shadows.md,
     borderWidth: 1,
-    borderColor: Colors.neutral[100],
   },
   cardHeader: {
     flexDirection: 'row',
@@ -298,32 +287,27 @@ const styles = StyleSheet.create({
   rating: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.neutral[700],
   },
   distance: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    color: Colors.neutral[500],
     marginTop: 2,
   },
   businessName: {
     fontFamily: 'Inter-Bold',
     fontSize: 18,
-    color: Colors.neutral[800],
     marginBottom: Spacing.xs,
   },
   description: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: Colors.neutral[600],
     marginBottom: Spacing.base,
   },
   discountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.secondary[50],
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -333,7 +317,6 @@ const styles = StyleSheet.create({
   discountText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 13,
-    color: Colors.secondary[700],
   },
   addressContainer: {
     flexDirection: 'row',
@@ -344,7 +327,6 @@ const styles = StyleSheet.create({
   address: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.neutral[500],
     flex: 1,
   },
   cardActions: {
@@ -357,14 +339,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.secondary[500],
     paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.lg,
   },
   callButtonText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.text.inverse,
   },
   mapButton: {
     flex: 1,
@@ -372,16 +352,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.primary[50],
     paddingVertical: Spacing.sm + 2,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.primary[200],
   },
   mapButtonText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.primary[600],
   },
   emptyState: {
     padding: Spacing['3xl'],
@@ -390,6 +367,5 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Inter-Regular',
     fontSize: 16,
-    color: Colors.neutral[500],
   },
 });

@@ -28,7 +28,7 @@ const tabs = [
   { id: 'sharing', label: 'Veriyorum' },
 ];
 
-function ShareCard({ item, index }: { item: ShareItem; index: number }) {
+function ShareCard({ item, index, Colors }: { item: ShareItem; index: number; Colors: any }) {
   const typeConfig = {
     borrowing: {
       label: 'Arıyorum',
@@ -41,7 +41,6 @@ function ShareCard({ item, index }: { item: ShareItem; index: number }) {
   };
 
   const config = typeConfig[item.type];
-  const Colors = useThemeColors();
 
   return (
     <Animated.View
@@ -183,7 +182,7 @@ export default function SharingScreen() {
 
           {filteredItems.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>Bu kategoride ilan bulunamadı</Text>
+              <Text style={[styles.emptyText, { color: Colors.slate[500] }]}>Bu kategoride ilan bulunamadı</Text>
             </View>
           )}
         </ScrollView>
@@ -207,7 +206,6 @@ export default function SharingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -281,7 +279,9 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: Spacing.base,
   },
-  cardFooter: {},
+  cardFooter: {
+    borderTopWidth: 1,
+  },
   cardOwner: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
@@ -293,7 +293,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: 'Inter-Regular',
     fontSize: 15,
-    color: Colors.slate[500],
   },
   fab: {
     position: 'absolute',
