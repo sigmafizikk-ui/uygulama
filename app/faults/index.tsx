@@ -30,9 +30,20 @@ const requestTargets = [
   { id: 'site', label: 'Site Yönetimi' },
 ];
 
-function getStatusConfig() {
+function FaultCard({
+  report,
+  index,
+  isAdmin,
+  onStatusChange,
+}: {
+  report: FaultReport;
+  index: number;
+  isAdmin: boolean;
+  onStatusChange: (id: string, status: FaultReport['status']) => void;
+}) {
   const Colors = useThemeColors();
-  return {
+
+  const statusConfig = {
     pending: {
       label: 'Beklemede',
       background: Colors.badge.pending,
@@ -52,21 +63,7 @@ function getStatusConfig() {
       icon: CheckCircle,
     },
   };
-}
 
-function FaultCard({
-  report,
-  index,
-  isAdmin,
-  onStatusChange,
-}: {
-  report: FaultReport;
-  index: number;
-  isAdmin: boolean;
-  onStatusChange: (id: string, status: FaultReport['status']) => void;
-}) {
-  const Colors = useThemeColors();
-  const statusConfig = getStatusConfig();
   const config = statusConfig[report.status];
 
   return (

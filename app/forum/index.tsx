@@ -29,16 +29,6 @@ import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
 import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockForumPosts, ForumPost, ForumReply, currentUser } from '@/utils/mockData';
 
-function getCategoryConfig() {
-  const Colors = useThemeColors();
-  return {
-    question: { icon: HelpCircle, label: 'Soru', color: Colors.status.info },
-    discussion: { icon: MessageSquare, label: 'Tartışma', color: Colors.primary[500] },
-    suggestion: { icon: Lightbulb, label: 'Öneri', color: Colors.secondary[500] },
-    complaint: { icon: AlertTriangle, label: 'Şikayet', color: Colors.status.warning },
-  };
-}
-
 function formatTimeAgo(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
@@ -89,7 +79,14 @@ function ForumPostCard({
   onToggle: () => void;
 }) {
   const Colors = useThemeColors();
-  const categoryConfig = getCategoryConfig();
+
+  const categoryConfig = {
+    question: { icon: HelpCircle, label: 'Soru', color: Colors.status.info },
+    discussion: { icon: MessageSquare, label: 'Tartışma', color: Colors.primary[500] },
+    suggestion: { icon: Lightbulb, label: 'Öneri', color: Colors.secondary[500] },
+    complaint: { icon: AlertTriangle, label: 'Şikayet', color: Colors.status.warning },
+  };
+
   const config = categoryConfig[post.category];
   const CategoryIcon = config.icon;
 

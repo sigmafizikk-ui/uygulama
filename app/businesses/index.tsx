@@ -35,20 +35,17 @@ const categories = [
   { id: 'health', label: 'Sağlık', icon: Heart },
 ];
 
-function getCategoryConfig() {
+function BusinessCard({ business, index }: { business: LocalBusiness; index: number }) {
   const Colors = useThemeColors();
-  return {
+
+  const categoryConfig = {
     food: { icon: Utensils, color: Colors.status.error },
     grocery: { icon: ShoppingBag, color: Colors.secondary[500] },
     service: { icon: Wrench, color: Colors.primary[500] },
     health: { icon: Heart, color: Colors.status.error },
     other: { icon: Store, color: Colors.neutral[500] },
   };
-}
 
-function BusinessCard({ business, index }: { business: LocalBusiness; index: number }) {
-  const Colors = useThemeColors();
-  const categoryConfig = getCategoryConfig();
   const config = categoryConfig[business.category] || categoryConfig.other;
   const CategoryIcon = config.icon;
 

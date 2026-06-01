@@ -16,9 +16,10 @@ import { mockDocuments } from '@/utils/mockData';
 import { Document } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 
-function getDocTypeConfig() {
+function DocumentCard({ document, index }: { document: Document; index: number }) {
   const Colors = useThemeColors();
-  return {
+
+  const docTypeConfig = {
     pdf: {
       color: Colors.status.error,
       extension: '.pdf',
@@ -36,11 +37,7 @@ function getDocTypeConfig() {
       extension: '',
     },
   };
-}
 
-function DocumentCard({ document, index }: { document: Document; index: number }) {
-  const Colors = useThemeColors();
-  const docTypeConfig = getDocTypeConfig();
   const config = docTypeConfig[document.type];
 
   return (
