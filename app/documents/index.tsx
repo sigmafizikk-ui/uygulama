@@ -10,31 +10,37 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft, FileText, Download, Eye, Folder, Calendar, HardDrive, Plus } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockDocuments } from '@/utils/mockData';
 import { Document } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 
-const docTypeConfig = {
-  pdf: {
-    color: Colors.status.error,
-    extension: '.pdf',
-  },
-  doc: {
-    color: Colors.primary[600],
-    extension: '.doc',
-  },
-  image: {
-    color: Colors.secondary[500],
-    extension: '',
-  },
-  other: {
-    color: Colors.neutral[500],
-    extension: '',
-  },
-};
+function getDocTypeConfig() {
+  const Colors = useThemeColors();
+  return {
+    pdf: {
+      color: Colors.status.error,
+      extension: '.pdf',
+    },
+    doc: {
+      color: Colors.primary[600],
+      extension: '.doc',
+    },
+    image: {
+      color: Colors.secondary[500],
+      extension: '',
+    },
+    other: {
+      color: Colors.neutral[500],
+      extension: '',
+    },
+  };
+}
 
 function DocumentCard({ document, index }: { document: Document; index: number }) {
+  const Colors = useThemeColors();
+  const docTypeConfig = getDocTypeConfig();
   const config = docTypeConfig[document.type];
 
   return (
@@ -86,6 +92,7 @@ function DocumentCard({ document, index }: { document: Document; index: number }
 }
 
 export default function DocumentsScreen() {
+  const Colors = useThemeColors();
   const router = useRouter();
   const { isAdmin } = useAuth();
 

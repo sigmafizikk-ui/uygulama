@@ -25,15 +25,19 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockForumPosts, ForumPost, ForumReply, currentUser } from '@/utils/mockData';
 
-const categoryConfig = {
-  question: { icon: HelpCircle, label: 'Soru', color: Colors.status.info },
-  discussion: { icon: MessageSquare, label: 'Tartışma', color: Colors.primary[500] },
-  suggestion: { icon: Lightbulb, label: 'Öneri', color: Colors.secondary[500] },
-  complaint: { icon: AlertTriangle, label: 'Şikayet', color: Colors.status.warning },
-};
+function getCategoryConfig() {
+  const Colors = useThemeColors();
+  return {
+    question: { icon: HelpCircle, label: 'Soru', color: Colors.status.info },
+    discussion: { icon: MessageSquare, label: 'Tartışma', color: Colors.primary[500] },
+    suggestion: { icon: Lightbulb, label: 'Öneri', color: Colors.secondary[500] },
+    complaint: { icon: AlertTriangle, label: 'Şikayet', color: Colors.status.warning },
+  };
+}
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -48,6 +52,7 @@ function formatTimeAgo(date: Date): string {
 }
 
 function ReplyItem({ reply, index }: { reply: ForumReply; index: number }) {
+  const Colors = useThemeColors();
   return (
     <View style={styles.replyItem}>
       <View style={styles.replyHeader}>
@@ -83,6 +88,8 @@ function ForumPostCard({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const Colors = useThemeColors();
+  const categoryConfig = getCategoryConfig();
   const config = categoryConfig[post.category];
   const CategoryIcon = config.icon;
 
@@ -171,6 +178,7 @@ function ForumPostCard({
 }
 
 export default function ForumScreen() {
+  const Colors = useThemeColors();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedPosts, setExpandedPosts] = useState<Set<string>>(new Set());
@@ -178,6 +186,8 @@ export default function ForumScreen() {
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostCategory, setNewPostCategory] = useState<'question' | 'discussion' | 'suggestion' | 'complaint'>('question');
+
+  const categoryConfig = getCategoryConfig();
 
   const togglePost = (postId: string) => {
     setExpandedPosts((prev) => {

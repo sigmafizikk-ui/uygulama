@@ -11,26 +11,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockNeighbors } from '@/utils/mockData';
 import { Neighbor } from '@/types';
 
-function NeighborRow({ neighbor, index }: { neighbor: Neighbor; index: number }) {
+function NeighborRow({ neighbor, index, Colors }: { neighbor: Neighbor; index: number; Colors: any }) {
   const initials = `${neighbor.name.charAt(0)}${neighbor.surname.charAt(0)}`;
 
   return (
     <Animated.View
       entering={FadeInDown.delay(50 + index * 40)}
-      style={styles.neighborRow}
+      style={[styles.neighborRow, { backgroundColor: Colors.background.card }]}
     >
-      <View style={styles.neighborAvatar}>
-        <Text style={styles.avatarText}>{initials}</Text>
+      <View style={[styles.neighborAvatar, { backgroundColor: Colors.primary[100] }]}>
+        <Text style={[styles.avatarText, { color: Colors.primary[600] }]}>{initials}</Text>
       </View>
       <View style={styles.neighborInfo}>
-        <Text style={styles.neighborName}>
+        <Text style={[styles.neighborName, { color: Colors.text.primary }]}>
           {neighbor.name} {neighbor.surname}
         </Text>
-        <Text style={styles.neighborApartment}>{neighbor.apartment}</Text>
+        <Text style={[styles.neighborApartment, { color: Colors.text.secondary }]}>{neighbor.apartment}</Text>
       </View>
     </Animated.View>
   );
@@ -49,10 +50,9 @@ function groupNeighborsByFloor(neighbors: Neighbor[]) {
 
 export default function NeighborsScreen() {
   const router = useRouter();
-  const groupedNeighbors = groupNeighborsByFloor(mockNeighbors);
-  const floors = Object.keys(groupedNeighbors)
-    .map(Number)
-    .sort((a, b) => a - b);
+  const Colors = useThemeColors();
+  const [neighbors] = useState<Neighbor[]>(mockNeighbors);
+  const groupedNeighbors = groupNeighborsByFloor(neighbors);
 
   return (
     <>
@@ -63,43 +63,41 @@ export default function NeighborsScreen() {
           headerTitleStyle: {
             fontFamily: 'Inter-SemiBold',
             fontSize: 18,
-            color: Colors.slate[800],
           },
           headerStyle: {
             backgroundColor: Colors.background.secondary,
           },
+          headerTintColor: Colors.text.primary,
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
               style={styles.backButton}
             >
-              <ArrowLeft color={Colors.slate[700]} size={24} strokeWidth={2} />
+              <ArrowLeft color={Colors.text.primary} size={24} strokeWidth={2} />
             </TouchableOpacity>
           ),
           headerShadowVisible: false,
         }}
       />
 
-      <SafeAreaView style={styles.container} edges={['bottom']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.primary }]} edges={['bottom']}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {floors.map((floor) => (
-            <View key={floor} style={styles.floorGroup}>
-              <Text style={styles.floorTitle}>Kat {floor}</Text>
-              <View style={styles.floorCard}>
-                {groupedNeighbors[floor].map((neighbor, index) => (
-                  <NeighborRow
-                    key={neighbor.id}
-                    neighbor={neighbor}
-                    index={index}
-                  />
-                ))}
+          {Object.entries(groupedNeighbors)
+            .sort(([a], [b]) => Number(b) - Number(a))
+            .map(([floor, floorNeighbors]) => (
+              <View key={floor} style={styles.floorGroup}>
+                <Text style={[styles.floorTitle, { color: Colors.text.tertiary }]}>{floor}. Kat</Text>
+                <View style={[styles.floorCard, { backgroundColor: Colors.background.card }]}>
+                  {floorNeighbors.map((neighbor, index) => (
+                    <NeighborRow key={neighbor.id} neighbor={neighbor} index={index} Colors={Colors} />
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
+            ))}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -109,7 +107,6 @@ export default function NeighborsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.slate[50],
   },
   backButton: {
     marginLeft: Spacing.sm,
@@ -120,35 +117,32 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: Spacing.lg,
-    paddingBottom: Spacing['4xl'],
+    paddingBottom: Spacing['4xl'] + 80,
   },
   floorGroup: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   floorTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    color: Colors.slate[700],
     marginBottom: Spacing.sm,
+    marginLeft: Spacing.xs,
   },
   floorCard: {
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius['2xl'],
-    padding: Spacing.sm,
-    ...Shadows.sm,
+    padding: Spacing.base,
+    ...Shadows.md,
   },
   neighborRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Spacing.base,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.slate[100],
   },
   neighborAvatar: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.primary[100],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -156,20 +150,17 @@ const styles = StyleSheet.create({
   avatarText: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.primary[600],
   },
   neighborInfo: {
     flex: 1,
   },
   neighborName: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: 15,
-    color: Colors.slate[800],
+    fontSize: 16,
     marginBottom: 2,
   },
   neighborApartment: {
     fontFamily: 'Inter-Regular',
     fontSize: 13,
-    color: Colors.slate[500],
   },
 });

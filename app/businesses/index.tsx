@@ -23,7 +23,8 @@ import {
   Heart,
   Store,
 } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockBusinesses, LocalBusiness } from '@/utils/mockData';
 
 const categories = [
@@ -34,15 +35,20 @@ const categories = [
   { id: 'health', label: 'Sağlık', icon: Heart },
 ];
 
-const categoryConfig = {
-  food: { icon: Utensils, color: Colors.status.error },
-  grocery: { icon: ShoppingBag, color: Colors.secondary[500] },
-  service: { icon: Wrench, color: Colors.primary[500] },
-  health: { icon: Heart, color: Colors.status.error },
-  other: { icon: Store, color: Colors.neutral[500] },
-};
+function getCategoryConfig() {
+  const Colors = useThemeColors();
+  return {
+    food: { icon: Utensils, color: Colors.status.error },
+    grocery: { icon: ShoppingBag, color: Colors.secondary[500] },
+    service: { icon: Wrench, color: Colors.primary[500] },
+    health: { icon: Heart, color: Colors.status.error },
+    other: { icon: Store, color: Colors.neutral[500] },
+  };
+}
 
 function BusinessCard({ business, index }: { business: LocalBusiness; index: number }) {
+  const Colors = useThemeColors();
+  const categoryConfig = getCategoryConfig();
   const config = categoryConfig[business.category] || categoryConfig.other;
   const CategoryIcon = config.icon;
 
@@ -102,6 +108,7 @@ function BusinessCard({ business, index }: { business: LocalBusiness; index: num
 }
 
 export default function BusinessesScreen() {
+  const Colors = useThemeColors();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('all');
 

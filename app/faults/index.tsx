@@ -12,7 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft, Clock, CheckCircle, Loader, Camera, ChevronRight } from 'lucide-react-native';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { Spacing, BorderRadius, Shadows } from '@/utils/theme';
+import { useThemeColors } from '@/hooks/useThemeColors';
 import { mockFaultReports, currentUser } from '@/utils/mockData';
 import { FaultReport } from '@/types';
 import { useAuth } from '@/context/AuthContext';
@@ -29,26 +30,29 @@ const requestTargets = [
   { id: 'site', label: 'Site Yönetimi' },
 ];
 
-const statusConfig = {
-  pending: {
-    label: 'Beklemede',
-    background: Colors.badge.pending,
-    textColor: Colors.badge.pendingText,
-    icon: Clock,
-  },
-  in_progress: {
-    label: 'İşleme Alındı',
-    background: Colors.badge.in_progress,
-    textColor: Colors.badge.in_progressText,
-    icon: Loader,
-  },
-  resolved: {
-    label: 'Çözüldü',
-    background: Colors.badge.resolved,
-    textColor: Colors.badge.resolvedText,
-    icon: CheckCircle,
-  },
-};
+function getStatusConfig() {
+  const Colors = useThemeColors();
+  return {
+    pending: {
+      label: 'Beklemede',
+      background: Colors.badge.pending,
+      textColor: Colors.badge.pendingText,
+      icon: Clock,
+    },
+    in_progress: {
+      label: 'İşleme Alındı',
+      background: Colors.badge.in_progress,
+      textColor: Colors.badge.in_progressText,
+      icon: Loader,
+    },
+    resolved: {
+      label: 'Çözüldü',
+      background: Colors.badge.resolved,
+      textColor: Colors.badge.resolvedText,
+      icon: CheckCircle,
+    },
+  };
+}
 
 function FaultCard({
   report,
@@ -61,6 +65,8 @@ function FaultCard({
   isAdmin: boolean;
   onStatusChange: (id: string, status: FaultReport['status']) => void;
 }) {
+  const Colors = useThemeColors();
+  const statusConfig = getStatusConfig();
   const config = statusConfig[report.status];
 
   return (
@@ -110,6 +116,7 @@ function FaultCard({
 }
 
 export default function FaultsScreen() {
+  const Colors = useThemeColors();
   const router = useRouter();
   const { isAdmin } = useAuth();
   const [faultReports, setFaultReports] = useState<FaultReport[]>(mockFaultReports);
