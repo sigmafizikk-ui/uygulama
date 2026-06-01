@@ -22,27 +22,6 @@ import { Announcement } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { useSite } from '@/context/SiteContext';
 
-const priorityConfig = {
-  urgent: {
-    label: 'Acil',
-    background: Colors.status.error + '15',
-    text: Colors.status.error,
-    border: Colors.status.error + '40',
-  },
-  warning: {
-    label: 'Uyarı',
-    background: Colors.amber[500] + '15',
-    text: Colors.amber[600],
-    border: Colors.amber[500] + '40',
-  },
-  info: {
-    label: 'Bilgilendirme',
-    background: Colors.primary[500] + '15',
-    text: Colors.primary[600],
-    border: Colors.primary[500] + '40',
-  },
-};
-
 function formatDate(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
@@ -59,6 +38,27 @@ function formatDate(date: Date): string {
 }
 
 function AnnouncementCard({ announcement, index, Colors }: { announcement: Announcement; index: number; Colors: any }) {
+  const priorityConfig = {
+    urgent: {
+      label: 'Acil',
+      background: Colors.status.error + '15',
+      text: Colors.status.error,
+      border: Colors.status.error + '40',
+    },
+    warning: {
+      label: 'Uyarı',
+      background: Colors.amber[500] + '15',
+      text: Colors.amber[600],
+      border: Colors.amber[500] + '40',
+    },
+    info: {
+      label: 'Bilgilendirme',
+      background: Colors.primary[500] + '15',
+      text: Colors.primary[600],
+      border: Colors.primary[500] + '40',
+    },
+  };
+
   const config = priorityConfig[announcement.priority];
 
   return (
