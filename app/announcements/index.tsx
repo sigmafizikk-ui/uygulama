@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'] + 80,
   },
   card: {
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -219,19 +218,16 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontFamily: 'Inter-Bold',
     fontSize: 17,
-    color: Colors.slate[800],
     marginBottom: Spacing.sm,
   },
   cardContent: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 21,
-    color: Colors.slate[600],
     marginBottom: Spacing.base,
   },
   cardFooter: {
     borderTopWidth: 1,
-    borderTopColor: Colors.slate[100],
     paddingTop: Spacing.sm,
   },
   cardMeta: {

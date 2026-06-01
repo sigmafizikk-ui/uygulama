@@ -217,26 +217,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.secondary,
     gap: Spacing.sm,
   },
   tab: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.slate[100],
-  },
-  tabActive: {
-    backgroundColor: Colors.primary[600],
   },
   tabText: {
     fontFamily: 'Inter-Medium',
     fontSize: 14,
-    color: Colors.slate[600],
-  },
-  tabTextActive: {
-    color: Colors.text.inverse,
-    fontFamily: 'Inter-SemiBold',
   },
   scrollView: {
     flex: 1,
@@ -246,7 +236,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['4xl'] + 80,
   },
   card: {
-    backgroundColor: Colors.background.secondary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -285,20 +274,17 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    color: Colors.slate[800],
   },
   cardDescription: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 20,
-    color: Colors.slate[600],
     marginBottom: Spacing.base,
   },
   cardFooter: {},
   cardOwner: {
     fontFamily: 'Inter-Medium',
     fontSize: 13,
-    color: Colors.slate[500],
   },
   emptyState: {
     padding: Spacing['2xl'],
@@ -326,3 +312,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
